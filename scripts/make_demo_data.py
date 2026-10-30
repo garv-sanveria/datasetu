@@ -180,10 +180,18 @@ STATUSES = ["Approved", "In-Progress", "Under Review", "Completed", "Audited & V
 
 
 def generate_baseline_7col_rows(count: int = 310) -> list[list[str]]:
-    """Generates 310 baseline rows matching test specifications."""
+    """Generates 310 baseline rows matching test specifications with high-impact showcase rows at the top."""
+    showcase_rows = [
+        ["Karnataka", "Bijapur", "Jal Jeevan Mission", "12 Crores", "Nil", "5,420", "Audited"],
+        ["Maharashtra", "Poona", "Mahatma Gandhi NREGA", "3.75 Crores", "48 Lakhs", "12,500", "Completed"],
+        ["Haryana", "Gurgaon", "Pradhan Mantri Gram Sadak Yojana", "1,45.20*", "32,10,000", "850", "Approved"],
+        ["Uttar Pradesh", "Prayagraj", "Pradhan Mantri Awas Yojana - Gramin", "85 Lakhs", "80 Lakhs", "2,300", "Audited & Verified"],
+        ["Bihar", "Aurangabad", "PM-KISAN Samman Nidhi", "15,000", "14,200", "980", "Fund Disbursed"],
+        ["Karnataka", "Bangalore (U)", "Swachh Bharat Mission - Gramin", "2.5 Lakhs", "2.1 Lakhs", "1,234", "In-Progress"],
+    ]
     random.seed(42)
-    rows = []
-    for _ in range(count):
+    rows = list(showcase_rows)
+    for _ in range(count - len(showcase_rows)):
         state, district, _ = random.choice(DISTRICT_CASES)
         scheme = random.choice(SCHEMES)
         alloc = random.choice(MESSY_ALLOCATIONS)

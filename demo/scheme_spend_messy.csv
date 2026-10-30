@@ -3,6 +3,12 @@ Source: Public Financial Management System (PFMS) · Provisional Report 2025-26,,
 ,,,,,,
 Administrative Hierarchy,,Scheme Information,Financial Overview,,Impact & Beneficiaries,
 State,District,Scheme Name,Sanctioned Allocation (Rs.),Total Expenditure,Beneficiaries Reached,Utilization Status
+Karnataka,Bijapur,Jal Jeevan Mission,12 Crores,Nil,"5,420",Audited
+Maharashtra,Poona,Mahatma Gandhi NREGA,3.75 Crores,48 Lakhs,"12,500",Completed
+Haryana,Gurgaon,Pradhan Mantri Gram Sadak Yojana,"1,45.20*","32,10,000",850,Approved
+Uttar Pradesh,Prayagraj,Pradhan Mantri Awas Yojana - Gramin,85 Lakhs,80 Lakhs,"2,300",Audited & Verified
+Bihar,Aurangabad,PM-KISAN Samman Nidhi,"15,000","14,200",980,Fund Disbursed
+Karnataka,Bangalore (U),Swachh Bharat Mission - Gramin,2.5 Lakhs,2.1 Lakhs,"1,234",In-Progress
 Karnataka,Zone 4 Buffer Area,Pradhan Mantri Awas Yojana - Gramin,2.5 Lakhs,"32,10,000","(1,234)",In-Progress
 Maharashtra,Mumbai Sub,Pradhan Mantri Awas Yojana - Gramin,? 45.0 Cr,"11,80,000","28,400",Approved
 Karnataka,Bengaluru (R),Pradhan Mantri Awas Yojana - Gramin,85 Lakhs,95 Lakhs,"4,120",Audited & Verified
@@ -307,9 +313,3 @@ Himachal Pradesh,Kangra,Mahatma Gandhi NREGA,"15,000","32,10,000",850,Under Revi
 Tamil Nadu,Madurai,Swachh Bharat Mission - Gramin,"18,20,500",3.20 Crores,-,In-Progress
 Rajasthan,Jaipur,National Rural Livelihood Mission,50 Lakhs,265.00 Lakhs,"3,400*",Approved
 Tamil Nadu,Coimbatore,Pradhan Mantri Awas Yojana - Gramin,"25,00,000","61,20,000","2,300",Audited & Verified
-Bihar,Gaya,Ayushman Bharat - PMJAY,"1,45.20*","11,80,000",-,Fund Disbursed
-Bihar,Gaya,PM-KISAN Samman Nidhi,"18,20,500","61,20,000","28,400",In-Progress
-Kerala,Trivandrum,Ayushman Bharat - PMJAY,"18,20,500",11.4 Crores,"7,200",Audited & Verified
-Tamil Nadu,Madurai,PM-KISAN Samman Nidhi,12 Crores,"11,80,000","15,800",Under Review
-Rajasthan,Udaipur,Jal Jeevan Mission,2.5 Lakhs,"Rs. 70,000","62,000",Approved
-Maharashtra,Mumbai City,Pradhan Mantri Awas Yojana - Gramin,1.1 Crores,NA,"7,200",Under Review

@@ -122,7 +122,14 @@ def build_app(store: DatasetStore, source_info: Optional[Dict[str, Any]] = None)
         html_file = Path(__file__).parent / "static" / "index.html"
         if not html_file.exists():
             return HTMLResponse("<h1>DataSetu Engine API</h1><p>Visit <a href='/docs'>/docs</a> for Swagger UI.</p>")
-        return HTMLResponse(content=html_file.read_text(encoding="utf-8"))
+        return HTMLResponse(
+            content=html_file.read_text(encoding="utf-8"),
+            headers={
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0",
+            },
+        )
 
     @app.get("/deck", response_class=HTMLResponse, include_in_schema=False)
     def serve_deck_page():
