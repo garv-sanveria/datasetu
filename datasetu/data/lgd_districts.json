@@ -1,0 +1,253 @@
+{
+  "_meta": {
+    "source": "SEED SAMPLE - replace via scripts/import_lgd.py with the official LGD export",
+    "authority": "Local Government Directory (LGD), Ministry of Panchayati Raj, Govt of India",
+    "updated": "2026-10-30",
+    "description": "Seed gazetteer of Indian States and Districts with official LGD codes and common administrative aliases"
+  },
+  "states": {
+    "02": { "name": "Himachal Pradesh", "aliases": ["HP", "H.P."] },
+    "06": { "name": "Haryana", "aliases": ["HR"] },
+    "07": { "name": "Delhi", "aliases": ["NCT of Delhi", "DL", "New Delhi"] },
+    "09": { "name": "Uttar Pradesh", "aliases": ["UP", "U.P."] },
+    "10": { "name": "Bihar", "aliases": ["BR"] },
+    "22": { "name": "Chhattisgarh", "aliases": ["CG", "Chhattishgarh"] },
+    "27": { "name": "Maharashtra", "aliases": ["MH", "Maha"] },
+    "29": { "name": "Karnataka", "aliases": ["KA", "Karntaka", "Karnatka"] },
+    "33": { "name": "Tamil Nadu", "aliases": ["TN", "Tamilnadu"] },
+    "36": { "name": "Telangana", "aliases": ["TS", "TG"] }
+  },
+  "districts": [
+    {
+      "state_code": 29,
+      "state_name": "Karnataka",
+      "district_code": 556,
+      "canonical_name": "Bengaluru Urban",
+      "aliases": ["Bangalore Urban", "Bangalore (U)", "Bangalore", "Bengaluru (U)", "Blr Urban", "Blr (U)", "BENGALURU URBAN", "BANGALORE"]
+    },
+    {
+      "state_code": 29,
+      "state_name": "Karnataka",
+      "district_code": 557,
+      "canonical_name": "Bengaluru Rural",
+      "aliases": ["Bangalore Rural", "Bangalore (R)", "Bengaluru (R)", "Blr Rural", "Blr (R)"]
+    },
+    {
+      "state_code": 29,
+      "state_name": "Karnataka",
+      "district_code": 577,
+      "canonical_name": "Mysuru",
+      "aliases": ["Mysore", "Mysuru District"]
+    },
+    {
+      "state_code": 29,
+      "state_name": "Karnataka",
+      "district_code": 555,
+      "canonical_name": "Belagavi",
+      "aliases": ["Belgaum"]
+    },
+    {
+      "state_code": 29,
+      "state_name": "Karnataka",
+      "district_code": 570,
+      "canonical_name": "Kalaburagi",
+      "aliases": ["Gulbarga"]
+    },
+    {
+      "state_code": 29,
+      "state_name": "Karnataka",
+      "district_code": 582,
+      "canonical_name": "Shivamogga",
+      "aliases": ["Shimoga"]
+    },
+    {
+      "state_code": 29,
+      "state_name": "Karnataka",
+      "district_code": 558,
+      "canonical_name": "Vijayapura",
+      "aliases": ["Bijapur"]
+    },
+    {
+      "state_code": 29,
+      "state_name": "Karnataka",
+      "district_code": 584,
+      "canonical_name": "Tumakuru",
+      "aliases": ["Tumkur"]
+    },
+    {
+      "state_code": 29,
+      "state_name": "Karnataka",
+      "district_code": 554,
+      "canonical_name": "Ballari",
+      "aliases": ["Bellary"]
+    },
+    {
+      "state_code": 29,
+      "state_name": "Karnataka",
+      "district_code": 564,
+      "canonical_name": "Dharwad",
+      "aliases": ["Dharwar"]
+    },
+    {
+      "state_code": 27,
+      "state_name": "Maharashtra",
+      "district_code": 521,
+      "canonical_name": "Pune",
+      "aliases": ["Poona"]
+    },
+    {
+      "state_code": 27,
+      "state_name": "Maharashtra",
+      "district_code": 517,
+      "canonical_name": "Mumbai City",
+      "aliases": ["Mumbai", "Bombay"]
+    },
+    {
+      "state_code": 27,
+      "state_name": "Maharashtra",
+      "district_code": 518,
+      "canonical_name": "Mumbai Suburban",
+      "aliases": ["Mumbai Sub", "Suburban Mumbai"]
+    },
+    {
+      "state_code": 27,
+      "state_name": "Maharashtra",
+      "district_code": 505,
+      "canonical_name": "Nagpur",
+      "aliases": ["Nagpore"]
+    },
+    {
+      "state_code": 27,
+      "state_name": "Maharashtra",
+      "district_code": 487,
+      "canonical_name": "Chhatrapati Sambhajinagar",
+      "aliases": ["Aurangabad", "Aurangabad (Maharashtra)", "Aurangabad (MH)"]
+    },
+    {
+      "state_code": 27,
+      "state_name": "Maharashtra",
+      "district_code": 531,
+      "canonical_name": "Thane",
+      "aliases": ["Thana"]
+    },
+    {
+      "state_code": 6,
+      "state_name": "Haryana",
+      "district_code": 70,
+      "canonical_name": "Gurugram",
+      "aliases": ["Gurgaon"]
+    },
+    {
+      "state_code": 6,
+      "state_name": "Haryana",
+      "district_code": 68,
+      "canonical_name": "Faridabad",
+      "aliases": []
+    },
+    {
+      "state_code": 10,
+      "state_name": "Bihar",
+      "district_code": 230,
+      "canonical_name": "Patna",
+      "aliases": []
+    },
+    {
+      "state_code": 10,
+      "state_name": "Bihar",
+      "district_code": 208,
+      "canonical_name": "Aurangabad",
+      "aliases": ["Aurangabad (Bihar)", "Aurangabad (BR)"]
+    },
+    {
+      "state_code": 10,
+      "state_name": "Bihar",
+      "district_code": 216,
+      "canonical_name": "Gaya",
+      "aliases": []
+    },
+    {
+      "state_code": 22,
+      "state_name": "Chhattisgarh",
+      "district_code": 386,
+      "canonical_name": "Raipur",
+      "aliases": []
+    },
+    {
+      "state_code": 22,
+      "state_name": "Chhattisgarh",
+      "district_code": 375,
+      "canonical_name": "Bilaspur",
+      "aliases": ["Bilaspur (Chhattisgarh)", "Bilaspur (CG)"]
+    },
+    {
+      "state_code": 2,
+      "state_name": "Himachal Pradesh",
+      "district_code": 11,
+      "canonical_name": "Bilaspur",
+      "aliases": ["Bilaspur (Himachal)", "Bilaspur (HP)"]
+    },
+    {
+      "state_code": 2,
+      "state_name": "Himachal Pradesh",
+      "district_code": 20,
+      "canonical_name": "Shimla",
+      "aliases": ["Simla"]
+    },
+    {
+      "state_code": 33,
+      "state_name": "Tamil Nadu",
+      "district_code": 603,
+      "canonical_name": "Chennai",
+      "aliases": ["Madras"]
+    },
+    {
+      "state_code": 33,
+      "state_name": "Tamil Nadu",
+      "district_code": 604,
+      "canonical_name": "Coimbatore",
+      "aliases": ["Kovai"]
+    },
+    {
+      "state_code": 36,
+      "state_name": "Telangana",
+      "district_code": 680,
+      "canonical_name": "Hyderabad",
+      "aliases": []
+    },
+    {
+      "state_code": 7,
+      "state_name": "Delhi",
+      "district_code": 94,
+      "canonical_name": "New Delhi",
+      "aliases": ["Delhi Central", "Central Delhi"]
+    },
+    {
+      "state_code": 9,
+      "state_name": "Uttar Pradesh",
+      "district_code": 157,
+      "canonical_name": "Lucknow",
+      "aliases": []
+    },
+    {
+      "state_code": 9,
+      "state_name": "Uttar Pradesh",
+      "district_code": 120,
+      "canonical_name": "Prayagraj",
+      "aliases": ["Allahabad"]
+    },
+    {
+      "state_code": 9,
+      "state_name": "Uttar Pradesh",
+      "district_code": 134,
+      "canonical_name": "Ayodhya",
+      "aliases": ["Faizabad"]
+    },
+    {
+      "state_code": 9,
+      "state_name": "Uttar Pradesh",
+      "district_code": 141,
+      "canonical_name": "Gautam Buddha Nagar",
+      "aliases": ["Noida", "Greater Noida", "GB Nagar"]
+    }
+  ]
+}
