@@ -31,16 +31,38 @@ random.seed(42)
 
 # Sectors & Schemes modeled directly after data.gov.in's top categories
 SECTORS_AND_SCHEMES = [
-    ("Economy & Finance", "Quarterly GDP District Economic Activity Outlay"),
+    # Economy & Finance (Directly modeled after data.gov.in/apis/?sector=Economy)
+    ("Economy & Finance", "Quarterly GDP Estimates at Current Prices (MoSPI Series)"),
+    ("Economy & Finance", "Quarterly GDP Estimates at Constant Prices (2011-12 Base)"),
+    ("Economy & Finance", "State Level Consumer Price Index (Rural/Urban CPI)"),
     ("Economy & Finance", "PM Jan Dhan Financial Inclusion Scheme"),
-    ("Rural Development", "Mahatma Gandhi NREGA"),
-    ("Rural Development", "Pradhan Mantri Awas Yojana - Gramin"),
-    ("Drinking Water & Sanitation", "Jal Jeevan Mission (Har Ghar Jal)"),
-    ("Drinking Water & Sanitation", "Swachh Bharat Mission - Gramin"),
-    ("Road Transport & Highways", "Pradhan Mantri Gram Sadak Yojana"),
-    ("Agriculture & Farmers Welfare", "PM-KISAN Samman Nidhi"),
-    ("Health & Family Welfare", "Ayushman Bharat - PMJAY"),
-    ("Rural Development", "National Rural Livelihood Mission"),
+    ("Economy & Finance", "Direct Benefit Transfer (DBT) Public Finance Outlay"),
+    ("Economy & Finance", "Micro Units Development & Refinance Agency (MUDRA Yojana)"),
+    # Rural Development
+    ("Rural Development", "Mahatma Gandhi National Rural Employment Guarantee Scheme (MGNREGA)"),
+    ("Rural Development", "Pradhan Mantri Awas Yojana - Gramin (PMAY-G)"),
+    ("Rural Development", "Deendayal Antyodaya Yojana - National Rural Livelihoods Mission"),
+    ("Rural Development", "Shyama Prasad Mukherji Rurban Mission"),
+    # Drinking Water & Sanitation
+    ("Drinking Water & Sanitation", "Jal Jeevan Mission (Har Ghar Nal Se Jal)"),
+    ("Drinking Water & Sanitation", "Swachh Bharat Mission - Gramin Phase II"),
+    ("Drinking Water & Sanitation", "National Rural Drinking Water Quality Monitoring Programme"),
+    # Road Transport & Highways
+    ("Road Transport & Highways", "Pradhan Mantri Gram Sadak Yojana (PMGSY III)"),
+    ("Road Transport & Highways", "Setu Bharatam National Road Connectivity Project"),
+    ("Road Transport & Highways", "Bharatmala Pariyojana Economic Corridors Outlay"),
+    # Agriculture & Farmers Welfare
+    ("Agriculture & Farmers Welfare", "PM-KISAN Samman Nidhi Direct Income Support"),
+    ("Agriculture & Farmers Welfare", "Pradhan Mantri Fasal Bima Yojana (Crop Insurance Scheme)"),
+    ("Agriculture & Farmers Welfare", "Paramparagat Krishi Vikas Yojana (Organic Farming)"),
+    ("Agriculture & Farmers Welfare", "Agriculture Infrastructure Fund (AIF Credit Line)"),
+    # Health & Family Welfare
+    ("Health & Family Welfare", "Ayushman Bharat - PMJAY National Health Protection"),
+    ("Health & Family Welfare", "National Health Mission - Primary Healthcare Infrastructure"),
+    ("Health & Family Welfare", "Pradhan Mantri Ayushman Bharat Health Infrastructure Mission"),
+    # Education & Skill Development
+    ("Education & Skill Development", "Samagra Shiksha Integrated School Education Scheme"),
+    ("Education & Skill Development", "Pradhan Mantri Kaushal Vikas Yojana (PMKVY 4.0)"),
 ]
 
 SCHEMES = [s[1] for s in SECTORS_AND_SCHEMES]
@@ -226,19 +248,21 @@ def generate_large_8col_rows(count: int = 1000) -> list[list[str]]:
     return rows
 
 
-def generate_master_9col_rows(count: int = 1250) -> list[list[str]]:
-    """Generates 1,250 multi-sector records modeled directly after data.gov.in top categories."""
+def generate_master_9col_rows(count: int = 2500) -> list[list[str]]:
+    """Generates 2,500 multi-sector records modeled directly after data.gov.in top categories."""
     random.seed(2026)
     rows = [
-        # Top showcase rows spanning key sectors
-        ["Karnataka", "Bijapur", "Drinking Water & Sanitation", "Jal Jeevan Mission (Har Ghar Jal)", "12 Crores", "6.20 Crores", "Nil", "5,420", "Audited & Verified"],
-        ["Maharashtra", "Poona", "Rural Development", "Mahatma Gandhi NREGA", "3.75 Crores", "1.85 Crores", "48 Lakhs", "12,500", "Completed"],
-        ["Haryana", "Gurgaon", "Road Transport & Highways", "Pradhan Mantri Gram Sadak Yojana", "1,45.20*", "72.60*", "32,10,000", "850", "Approved"],
-        ["Uttar Pradesh", "Prayagraj", "Rural Development", "Pradhan Mantri Awas Yojana - Gramin", "85 Lakhs", "40 Lakhs", "80 Lakhs", "2,300", "Audited & Verified"],
-        ["Bihar", "Aurangabad", "Agriculture & Farmers Welfare", "PM-KISAN Samman Nidhi", "15,000", "8,000", "14,200", "980", "Fund Disbursed"],
+        # Top showcase rows spanning key sectors directly matching data.gov.in/apis/?sector=Economy
+        ["Delhi", "New Delhi", "Economy & Finance", "Quarterly GDP Estimates at Current Prices (MoSPI Series)", "280.50 Lakhs", "140.25 Lakhs", "265.00 Lakhs", "18,900", "Completed"],
+        ["West Bengal", "Calcutta", "Economy & Finance", "State Level Consumer Price Index (Rural/Urban CPI)", "125.80 Lakhs", "60.0 Lakhs", "118.40 Lakhs", "45,000", "Audited & Verified"],
         ["Gujarat", "Ahmedabad", "Economy & Finance", "PM Jan Dhan Financial Inclusion Scheme", "45.0 Cr", "22.5 Cr", "42.10 Cr", "1,05,400", "Completed"],
-        ["Tamil Nadu", "Chennai", "Health & Family Welfare", "Ayushman Bharat - PMJAY", "14.80 Crores", "7.40 Crores", "13.90 Crores", "62,000", "Audited & Verified"],
-        ["Delhi", "New Delhi", "Economy & Finance", "Quarterly GDP District Economic Activity Outlay", "280.50 Lakhs", "140.25 Lakhs", "265.00 Lakhs", "18,900", "Completed"],
+        ["Karnataka", "Bijapur", "Drinking Water & Sanitation", "Jal Jeevan Mission (Har Ghar Nal Se Jal)", "12 Crores", "6.20 Crores", "Nil", "5,420", "Audited & Verified"],
+        ["Maharashtra", "Poona", "Rural Development", "Mahatma Gandhi National Rural Employment Guarantee Scheme (MGNREGA)", "3.75 Crores", "1.85 Crores", "48 Lakhs", "12,500", "Completed"],
+        ["Haryana", "Gurgaon", "Road Transport & Highways", "Pradhan Mantri Gram Sadak Yojana (PMGSY III)", "1,45.20*", "72.60*", "32,10,000", "850", "Approved"],
+        ["Uttar Pradesh", "Prayagraj", "Rural Development", "Pradhan Mantri Awas Yojana - Gramin (PMAY-G)", "85 Lakhs", "40 Lakhs", "80 Lakhs", "2,300", "Audited & Verified"],
+        ["Bihar", "Aurangabad", "Agriculture & Farmers Welfare", "PM-KISAN Samman Nidhi Direct Income Support", "15,000", "8,000", "14,200", "980", "Fund Disbursed"],
+        ["Tamil Nadu", "Chennai", "Health & Family Welfare", "Ayushman Bharat - PMJAY National Health Protection", "14.80 Crores", "7.40 Crores", "13.90 Crores", "62,000", "Audited & Verified"],
+        ["Telangana", "Hyderabad", "Education & Skill Development", "Pradhan Mantri Kaushal Vikas Yojana (PMKVY 4.0)", "65,00,000", "30,00,000", "61,20,000", "28,400", "Fund Disbursed"],
     ]
 
     for _ in range(count - len(rows)):
@@ -330,12 +354,12 @@ def make_demo_files(demo_dir: Path) -> tuple[Path, Path]:
         wb_l.save(large_xlsx_path)
 
     # ==========================================================
-    # FILE 3: Master 1,250-row National Governance Dataset (Crushes data.gov.in)
+    # FILE 3: Master 2,500-row National Governance Dataset (Crushes data.gov.in)
     # ==========================================================
     master_csv_path = demo_dir / "bharat_governance_master_2026.csv"
     master_xlsx_path = demo_dir / "bharat_governance_master_2026.xlsx"
 
-    data_rows_1250 = generate_master_9col_rows(1250)
+    data_rows_2500 = generate_master_9col_rows(2500)
     preamble_and_headers_9col = [
         [f"GOVERNMENT OF INDIA {en_dash} NATIONAL DIGITAL DATA INFRASTRUCTURE PLATFORM", "", "", "", "", "", "", "", ""],
         ["Source: Open Government Data Initiative · National Cross-Sector Performance Index 2025-26", "", "", "", "", "", "", "", ""],
@@ -343,19 +367,19 @@ def make_demo_files(demo_dir: Path) -> tuple[Path, Path]:
         ["Administrative Units", "", "Governance Portfolio", "", "Financial Provisions (INR)", "", "Execution & Audit", "Impact Metrics", "Audit & Monitoring"],
         ["State Name", "District Name", "Sector Category", "National Flagship Scheme", "Central Sanctioned Allocation", "State Matching Share Released", "Actual Expenditure Incurred", "Beneficiaries Reached", "Performance Lifecycle Status"]
     ]
-    all_rows_1250 = preamble_and_headers_9col + data_rows_1250
+    all_rows_2500 = preamble_and_headers_9col + data_rows_2500
 
     with open(master_csv_path, mode="w", encoding="cp1252", errors="replace", newline="") as f:
         writer = csv.writer(f)
-        for row in all_rows_1250:
+        for row in all_rows_2500:
             writer.writerow(row)
-    print(f"Generated Master CP1252 CSV: {master_csv_path} (1250 data rows across 8 sectors)")
+    print(f"Generated Master CP1252 CSV: {master_csv_path} (2500 data rows across 8 sectors)")
 
     if openpyxl is not None:
         wb_m = openpyxl.Workbook()
         ws_m = wb_m.active
         ws_m.title = "Bharat Governance 2026"
-        for row in all_rows_1250:
+        for row in all_rows_2500:
             ws_m.append(row)
         ws_m.merge_cells("A1:I1")
         ws_m.merge_cells("A2:I2")

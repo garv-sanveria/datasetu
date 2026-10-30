@@ -163,3 +163,58 @@ def test_invalid_filter_column_returns_400(api_client: TestClient):
     resp = api_client.get("/v1/data?non_existent_column=foo")
     assert resp.status_code == 400
     assert "Unknown column filter" in resp.json()["detail"]
+
+
+def test_multi_format_exports(api_client: TestClient):
+    # CSV streaming export
+    resp_csv = api_client.get("/v1/data?limit=5&format=csv")
+    assert resp_csv.status_code == 200
+    assert "text/csv" in resp_csv.headers["content-type"]
+    assert len(resp_csv.content) > 0
+
+    # Parquet streaming export
+    resp_parquet = api_client.get("/v1/data?limit=5&format=parquet")
+    assert resp_parquet.status_code == 200
+    assert "application/octet-stream" in resp_parquet.headers["content-type"]
+    assert len(resp_parquet.content) > 0
+
+    # NDJSON streaming export
+    resp_ndjson = api_client.get("/v1/data?limit=5&format=ndjson")
+    assert resp_ndjson.status_code == 200
+    assert "application/x-ndjson" in resp_ndjson.headers["content-type"]
+    lines = [line for line in resp_ndjson.text.strip().split("\n") if line]
+    assert len(lines) == 5
+
+
+def test_compare_data_gov_in_endpoint(api_client: TestClient):
+    resp = api_client.get("/v1/compare/data-gov-in")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert "comparison" in body
+    assert "authentication" in body["comparison"]
+    assert "freshness_and_cdc" in body["comparison"]
+    assert "entity_intelligence" in body["comparison"]
+
+
+def test_semantic_column_filter_resolution(api_client: TestClient):
+    # 'state' alias should resolve to 'Administrative Hierarchy - State'
+    resp = api_client.get("/v1/data?state=Karnataka")
+    assert resp.status_code == 200
+    data = resp.json()["data"]
+    assert len(data) > 0
+    for row in data:
+        assert row["Administrative Hierarchy - State"] == "Karnataka"
+
+
+def test_cdc_trigger_and_status(api_client: TestClient):
+    resp_trigger = api_client.post("/v1/cdc/trigger")
+    assert resp_trigger.status_code == 200
+    trigger_data = resp_trigger.json()
+    assert trigger_data["status"] == "cdc_sync_completed"
+    assert trigger_data["zero_downtime"] is True
+
+    resp_status = api_client.get("/v1/cdc/status")
+    assert resp_status.status_code == 200
+    status_data = resp_status.json()
+    assert status_data["cdc_worker"] == "active"
+    assert status_data["total_swaps"] >= 2

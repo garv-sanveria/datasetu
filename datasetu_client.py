@@ -39,13 +39,15 @@ class Meta:
 class DatasetRecord:
     """Typed record representing a row in the dataset."""
 
-    administrative_hierarchy___state: Optional[str] = None
-    administrative_hierarchy___district: Optional[str] = None
-    scheme_information___scheme_name: Optional[str] = None
-    financial_overview___sanctioned_allocation__rs: Optional[float] = None
-    financial_overview___total_expenditure: Optional[float] = None
-    impact___beneficiaries___beneficiaries_reached: Optional[int] = None
-    impact___beneficiaries___utilization_status: Optional[str] = None
+    administrative_units___state_name: Optional[str] = None
+    administrative_units___district_name: Optional[str] = None
+    governance_portfolio___sector_category: Optional[str] = None
+    governance_portfolio___national_flagship_scheme: Optional[str] = None
+    financial_provisions__inr____central_sanctioned_allocation: Optional[float] = None
+    financial_provisions__inr____state_matching_share_released: Optional[float] = None
+    execution___audit___actual_expenditure_incurred: Optional[float] = None
+    impact_metrics___beneficiaries_reached: Optional[int] = None
+    audit___monitoring___performance_lifecycle_status: Optional[str] = None
     lgd_state_code: Optional[int] = None
     lgd_district_code: Optional[int] = None
     lgd_district_name: Optional[str] = None
@@ -55,13 +57,15 @@ class DatasetRecord:
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> DatasetRecord:
         return cls(
-            administrative_hierarchy___state=data.get("Administrative Hierarchy - State"),
-            administrative_hierarchy___district=data.get("Administrative Hierarchy - District"),
-            scheme_information___scheme_name=data.get("Scheme Information - Scheme Name"),
-            financial_overview___sanctioned_allocation__rs=data.get("Financial Overview - Sanctioned Allocation (Rs.)"),
-            financial_overview___total_expenditure=data.get("Financial Overview - Total Expenditure"),
-            impact___beneficiaries___beneficiaries_reached=data.get("Impact & Beneficiaries - Beneficiaries Reached"),
-            impact___beneficiaries___utilization_status=data.get("Impact & Beneficiaries - Utilization Status"),
+            administrative_units___state_name=data.get("Administrative Units - State Name"),
+            administrative_units___district_name=data.get("Administrative Units - District Name"),
+            governance_portfolio___sector_category=data.get("Governance Portfolio - Sector Category"),
+            governance_portfolio___national_flagship_scheme=data.get("Governance Portfolio - National Flagship Scheme"),
+            financial_provisions__inr____central_sanctioned_allocation=data.get("Financial Provisions (INR) - Central Sanctioned Allocation"),
+            financial_provisions__inr____state_matching_share_released=data.get("Financial Provisions (INR) - State Matching Share Released"),
+            execution___audit___actual_expenditure_incurred=data.get("Execution & Audit - Actual Expenditure Incurred"),
+            impact_metrics___beneficiaries_reached=data.get("Impact Metrics - Beneficiaries Reached"),
+            audit___monitoring___performance_lifecycle_status=data.get("Audit & Monitoring - Performance Lifecycle Status"),
             lgd_state_code=data.get("lgd_state_code"),
             lgd_district_code=data.get("lgd_district_code"),
             lgd_district_name=data.get("lgd_district_name"),
@@ -71,13 +75,15 @@ class DatasetRecord:
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            "Administrative Hierarchy - State": self.administrative_hierarchy___state,
-            "Administrative Hierarchy - District": self.administrative_hierarchy___district,
-            "Scheme Information - Scheme Name": self.scheme_information___scheme_name,
-            "Financial Overview - Sanctioned Allocation (Rs.)": self.financial_overview___sanctioned_allocation__rs,
-            "Financial Overview - Total Expenditure": self.financial_overview___total_expenditure,
-            "Impact & Beneficiaries - Beneficiaries Reached": self.impact___beneficiaries___beneficiaries_reached,
-            "Impact & Beneficiaries - Utilization Status": self.impact___beneficiaries___utilization_status,
+            "Administrative Units - State Name": self.administrative_units___state_name,
+            "Administrative Units - District Name": self.administrative_units___district_name,
+            "Governance Portfolio - Sector Category": self.governance_portfolio___sector_category,
+            "Governance Portfolio - National Flagship Scheme": self.governance_portfolio___national_flagship_scheme,
+            "Financial Provisions (INR) - Central Sanctioned Allocation": self.financial_provisions__inr____central_sanctioned_allocation,
+            "Financial Provisions (INR) - State Matching Share Released": self.financial_provisions__inr____state_matching_share_released,
+            "Execution & Audit - Actual Expenditure Incurred": self.execution___audit___actual_expenditure_incurred,
+            "Impact Metrics - Beneficiaries Reached": self.impact_metrics___beneficiaries_reached,
+            "Audit & Monitoring - Performance Lifecycle Status": self.audit___monitoring___performance_lifecycle_status,
             "lgd_state_code": self.lgd_state_code,
             "lgd_district_code": self.lgd_district_code,
             "lgd_district_name": self.lgd_district_name,

@@ -18,6 +18,7 @@ How it connects:
 
 from __future__ import annotations
 
+import io
 import time
 from dataclasses import dataclass
 from typing import Any
@@ -76,6 +77,16 @@ class DatasetStore:
             "reason": "Initial dataset ingest",
         })
 
+        # Create ART indices on LGD and key administrative columns for high-throughput queries
+        for col in self._columns:
+            if col in ("lgd_district_code", "lgd_state_code") or any(k in col.lower() for k in ("state", "district")):
+                safe_col = _safe_sql_ident(col)
+                idx_name = f"idx_{self.table_name}_{abs(hash(col)) % 100000}"
+                try:
+                    self.conn.execute(f"CREATE INDEX IF NOT EXISTS {idx_name} ON {self.table_name} ({safe_col})")
+                except Exception:
+                    pass
+
     def swap(self, new_table: pa.Table, new_report: Any = None) -> str:
         """Atomically replaces the active table in DuckDB and increments version."""
         # Calculate new semantic version (increment patch)
@@ -102,9 +113,19 @@ class DatasetStore:
             raise
 
         self.version = new_version
-        self.report = new_report
+        self.report = new_report or self.report
         self._columns = [field.name for field in new_table.schema]
         self._column_types = {field.name: str(field.type) for field in new_table.schema}
+
+        # Create ART indices on swapped table
+        for col in self._columns:
+            if col in ("lgd_district_code", "lgd_state_code") or any(k in col.lower() for k in ("state", "district")):
+                safe_col = _safe_sql_ident(col)
+                idx_name = f"idx_{self.table_name}_{abs(hash(col)) % 100000}"
+                try:
+                    self.conn.execute(f"CREATE INDEX IF NOT EXISTS {idx_name} ON {self.table_name} ({safe_col})")
+                except Exception:
+                    pass
 
         self._changelog.append({
             "version": self.version,
@@ -127,6 +148,67 @@ class DatasetStore:
     def changelog(self) -> list[dict[str, Any]]:
         """Returns the history of dataset versions and update timestamps."""
         return list(self._changelog)
+
+    def resolve_column(self, col_name: str) -> str | None:
+        """Resolves a field or filter column name against active table columns.
+
+        Supports exact match, case-insensitive match, snake_case normalization,
+        and standard Indian public data semantic aliases (state, district, sector, scheme, etc.).
+        """
+        if not col_name or not self._columns:
+            return None
+
+        # 1. Exact match
+        if col_name in self._columns:
+            return col_name
+
+        cleaned = col_name.strip()
+        cleaned_lower = cleaned.lower()
+
+        # 2. Case-insensitive exact match
+        for col in self._columns:
+            if col.lower() == cleaned_lower:
+                return col
+
+        # 3. Normalized snake_case match (replace underscores, hyphens with spaces)
+        norm_key = cleaned_lower.replace("_", " ").replace("-", " ")
+        for col in self._columns:
+            norm_col = col.lower().replace("_", " ").replace("-", " ")
+            if norm_key == norm_col:
+                return col
+
+        # 4. Standard public governance semantic aliases
+        semantic_aliases: dict[str, list[str]] = {
+            "state": ["state name", "state", "st name", "state_name"],
+            "district": ["district name", "district", "dist name", "district_name"],
+            "sector": ["sector category", "sector", "sector_name", "department"],
+            "scheme": ["national flagship scheme", "scheme name", "scheme", "programme", "project"],
+            "allocation": ["central sanctioned allocation", "sanctioned allocation", "allocation", "sanctioned"],
+            "state_share": ["state matching share released", "state share", "matching share"],
+            "expenditure": ["actual expenditure incurred", "total expenditure", "expenditure", "spend"],
+            "beneficiaries": ["beneficiaries reached", "beneficiaries", "impact", "target reached"],
+            "status": ["performance lifecycle status", "utilization status", "lifecycle status", "status"],
+            "lgd_state": ["lgd_state_code", "lgd state code"],
+            "lgd_district": ["lgd_district_code", "lgd district code"],
+            "lgd_name": ["lgd_district_name", "lgd canonical name", "lgd_canonical_name"],
+        }
+
+        for concept, triggers in semantic_aliases.items():
+            if cleaned_lower == concept or any(trig in cleaned_lower for trig in triggers):
+                for target in triggers:
+                    for col in self._columns:
+                        c_lower = col.lower()
+                        if "status" in c_lower and "state" in target:
+                            continue
+                        if target in c_lower:
+                            return col
+
+        # 5. Substring containment match
+        for col in self._columns:
+            if cleaned_lower in col.lower() or col.lower() in cleaned_lower:
+                return col
+
+        return None
 
     def query(
         self,
@@ -162,9 +244,10 @@ class DatasetStore:
             selected_fields = []
             for f in fields:
                 f_clean = f.strip()
-                if f_clean not in self._columns:
+                resolved = self.resolve_column(f_clean)
+                if not resolved:
                     raise ValueError(f"Unknown field '{f_clean}'. Valid columns: {self._columns}")
-                selected_fields.append(_safe_sql_ident(f_clean))
+                selected_fields.append(_safe_sql_ident(resolved))
             select_sql = ", ".join(selected_fields)
         else:
             select_sql = "*"
@@ -186,10 +269,11 @@ class DatasetStore:
                     col_name = key
                     op = "="
 
-                if col_name not in self._columns:
+                resolved_col = self.resolve_column(col_name)
+                if not resolved_col:
                     raise ValueError(f"Unknown column filter '{col_name}'. Valid columns: {self._columns}")
 
-                safe_col = _safe_sql_ident(col_name)
+                safe_col = _safe_sql_ident(resolved_col)
                 if op == "=" and isinstance(val, str):
                     # Case-insensitive equality for text queries
                     where_clauses.append(f"LOWER(CAST({safe_col} AS VARCHAR)) = LOWER(?)")
@@ -217,10 +301,11 @@ class DatasetStore:
             sort_clean = sort.strip()
             descending = sort_clean.startswith("-")
             sort_col = sort_clean[1:] if descending else sort_clean
-            if sort_col not in self._columns:
+            resolved_sort = self.resolve_column(sort_col)
+            if not resolved_sort:
                 raise ValueError(f"Unknown sort column '{sort_col}'. Valid columns: {self._columns}")
             direction = "DESC" if descending else "ASC"
-            safe_sort_col = _safe_sql_ident(sort_col)
+            safe_sort_col = _safe_sql_ident(resolved_sort)
             sort_sql = f"ORDER BY {safe_sort_col} {direction}"
 
         # Count query
@@ -242,6 +327,119 @@ class DatasetStore:
 
         query_ms = round((time.perf_counter() - start_time) * 1000, 2)
         return QueryResult(rows=rows, total=total_rows, query_ms=query_ms)
+
+    def query_arrow(
+        self,
+        filters: dict[str, Any] | None = None,
+        sort: str | None = None,
+        page: int = 1,
+        limit: int = 50,
+        fields: list[str] | None = None,
+        q: str | None = None,
+    ) -> tuple[pa.Table, int, float]:
+        """Returns paginated query results as an Arrow table for streaming zero-copy exports."""
+        start_time = time.perf_counter()
+        page = max(1, page)
+        limit = min(max(1, limit), 5000)
+        offset = (page - 1) * limit
+
+        where_clauses: list[str] = []
+        params: list[Any] = []
+
+        if fields:
+            selected_fields = []
+            for f in fields:
+                f_clean = f.strip()
+                resolved = self.resolve_column(f_clean)
+                if not resolved:
+                    raise ValueError(f"Unknown field '{f_clean}'. Valid columns: {self._columns}")
+                selected_fields.append(_safe_sql_ident(resolved))
+            select_sql = ", ".join(selected_fields)
+        else:
+            select_sql = "*"
+
+        if filters:
+            for key, val in filters.items():
+                if val is None:
+                    continue
+                if key.endswith("__gte"):
+                    col_name = key[:-5]
+                    op = ">="
+                elif key.endswith("__lte"):
+                    col_name = key[:-5]
+                    op = "<="
+                else:
+                    col_name = key
+                    op = "="
+
+                resolved_col = self.resolve_column(col_name)
+                if not resolved_col:
+                    raise ValueError(f"Unknown column filter '{col_name}'. Valid columns: {self._columns}")
+
+                safe_col = _safe_sql_ident(resolved_col)
+                if op == "=" and isinstance(val, str):
+                    where_clauses.append(f"LOWER(CAST({safe_col} AS VARCHAR)) = LOWER(?)")
+                    params.append(str(val))
+                else:
+                    where_clauses.append(f"{safe_col} {op} ?")
+                    params.append(val)
+
+        if q and q.strip():
+            q_clean = q.strip()[:256]
+            search_token = f"%{q_clean.lower()}%"
+            q_clauses = []
+            for col in self._columns:
+                safe_col = _safe_sql_ident(col)
+                q_clauses.append(f"LOWER(CAST({safe_col} AS VARCHAR)) LIKE ?")
+                params.append(search_token)
+            where_clauses.append(f"({' OR '.join(q_clauses)})")
+
+        where_sql = f"WHERE {' AND '.join(where_clauses)}" if where_clauses else ""
+
+        sort_sql = ""
+        if sort and sort.strip():
+            sort_clean = sort.strip()
+            descending = sort_clean.startswith("-")
+            sort_col = sort_clean[1:] if descending else sort_clean
+            resolved_sort = self.resolve_column(sort_col)
+            if not resolved_sort:
+                raise ValueError(f"Unknown sort column '{sort_col}'. Valid columns: {self._columns}")
+            direction = "DESC" if descending else "ASC"
+            safe_sort_col = _safe_sql_ident(resolved_sort)
+            sort_sql = f"ORDER BY {safe_sort_col} {direction}"
+
+        count_sql = f"SELECT COUNT(*) FROM {self.table_name} {where_sql}"
+        total_rows = self.conn.execute(count_sql, params).fetchone()[0]
+
+        data_sql = f"""
+            SELECT {select_sql}
+            FROM {self.table_name}
+            {where_sql}
+            {sort_sql}
+            LIMIT {limit} OFFSET {offset}
+        """
+        table = self.conn.execute(data_sql, params).fetch_arrow_table()
+        query_ms = round((time.perf_counter() - start_time) * 1000, 2)
+        return table, total_rows, query_ms
+
+    def export_csv(self, table: pa.Table) -> bytes:
+        """Converts an Arrow Table into standardized UTF-8 CSV bytes."""
+        import pyarrow.csv as pacsv
+        buf = io.BytesIO()
+        pacsv.write_csv(table, buf)
+        return buf.getvalue()
+
+    def export_parquet(self, table: pa.Table) -> bytes:
+        """Converts an Arrow Table into compressed columnar Apache Parquet bytes."""
+        import pyarrow.parquet as pq
+        buf = io.BytesIO()
+        pq.write_table(table, buf, compression="snappy")
+        return buf.getvalue()
+
+    def export_ndjson(self, rows: list[dict[str, Any]]) -> str:
+        """Converts record rows into streaming Newline-Delimited JSON (NDJSON/JSONL)."""
+        import json
+        return "\n".join(json.dumps(r, default=str) for r in rows)
 
     def summary(self, group_by: str | None = None, metric: str | None = None) -> dict[str, Any]:
         """Calculates per-column statistics (count, nulls, min, max, mean, top 5 distinct)."""
