@@ -1,10 +1,11 @@
-import sys
 from pathlib import Path
+
 from pptx import Presentation
-from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
-from pptx.enum.text import PP_ALIGN
 from pptx.enum.shapes import MSO_SHAPE
+from pptx.enum.text import PP_ALIGN
+from pptx.util import Inches, Pt
+
 
 def create_deck(output_paths):
     prs = Presentation()
@@ -134,7 +135,7 @@ def create_deck(output_paths):
     p_sub.space_before = Pt(8)
 
     # 3 Key Value Metric Cards
-    c1 = create_card(s1, Inches(0.9), Inches(3.1), Inches(3.6), Inches(2.3), ACCENT_BLUE)
+    create_card(s1, Inches(0.9), Inches(3.1), Inches(3.6), Inches(2.3), ACCENT_BLUE)
     t1 = s1.shapes.add_textbox(Inches(1.05), Inches(3.25), Inches(3.3), Inches(2.0))
     p = t1.text_frame.paragraphs[0]
     p.text = "⚡ Zero-ETL CLI"
@@ -147,7 +148,7 @@ def create_deck(output_paths):
     p2.font.color.rgb = TEXT_MUTED
     p2.space_before = Pt(8)
 
-    c2 = create_card(s1, Inches(4.8), Inches(3.1), Inches(3.6), Inches(2.3), ACCENT_EMERALD)
+    create_card(s1, Inches(4.8), Inches(3.1), Inches(3.6), Inches(2.3), ACCENT_EMERALD)
     t2 = s1.shapes.add_textbox(Inches(4.95), Inches(3.25), Inches(3.3), Inches(2.0))
     p = t2.text_frame.paragraphs[0]
     p.text = "🇮🇳 Bharat Entity Intelligence"
@@ -160,7 +161,7 @@ def create_deck(output_paths):
     p2.font.color.rgb = TEXT_MUTED
     p2.space_before = Pt(8)
 
-    c3 = create_card(s1, Inches(8.7), Inches(3.1), Inches(3.6), Inches(2.3), ACCENT_CYAN)
+    create_card(s1, Inches(8.7), Inches(3.1), Inches(3.6), Inches(2.3), ACCENT_CYAN)
     t3 = s1.shapes.add_textbox(Inches(8.85), Inches(3.25), Inches(3.3), Inches(2.0))
     p = t3.text_frame.paragraphs[0]
     p.text = "🛡️ 100% Offline & Open"
@@ -174,7 +175,7 @@ def create_deck(output_paths):
     p2.space_before = Pt(8)
 
     # Team & Context Footer Card
-    f_card = create_card(s1, Inches(0.9), Inches(5.7), Inches(11.4), Inches(1.2), CARD_BORDER)
+    create_card(s1, Inches(0.9), Inches(5.7), Inches(11.4), Inches(1.2), CARD_BORDER)
     f_box = s1.shapes.add_textbox(Inches(1.1), Inches(5.8), Inches(11.0), Inches(1.0))
     tf_f = f_box.text_frame
     p_f = tf_f.paragraphs[0]

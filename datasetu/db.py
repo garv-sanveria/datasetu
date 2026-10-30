@@ -26,6 +26,11 @@ import duckdb
 import pyarrow as pa
 
 
+def _safe_sql_ident(ident: str) -> str:
+    """Escapes double quotes by doubling them per ANSI SQL standards to prevent injection."""
+    return f'"{ident.replace(chr(34), chr(34) * 2)}"'
+
+
 @dataclass
 class QueryResult:
     """Encapsulates the result of a paginated SQL query with execution timing."""
@@ -159,7 +164,7 @@ class DatasetStore:
                 f_clean = f.strip()
                 if f_clean not in self._columns:
                     raise ValueError(f"Unknown field '{f_clean}'. Valid columns: {self._columns}")
-                selected_fields.append(f'"{f_clean}"')
+                selected_fields.append(_safe_sql_ident(f_clean))
             select_sql = ", ".join(selected_fields)
         else:
             select_sql = "*"
@@ -184,20 +189,23 @@ class DatasetStore:
                 if col_name not in self._columns:
                     raise ValueError(f"Unknown column filter '{col_name}'. Valid columns: {self._columns}")
 
+                safe_col = _safe_sql_ident(col_name)
                 if op == "=" and isinstance(val, str):
                     # Case-insensitive equality for text queries
-                    where_clauses.append(f'LOWER(CAST("{col_name}" AS VARCHAR)) = LOWER(?)')
+                    where_clauses.append(f"LOWER(CAST({safe_col} AS VARCHAR)) = LOWER(?)")
                     params.append(str(val))
                 else:
-                    where_clauses.append(f'"{col_name}" {op} ?')
+                    where_clauses.append(f"{safe_col} {op} ?")
                     params.append(val)
 
-        # Global 'q' search across string columns
+        # Global 'q' search across string columns (bounded to 256 chars for security)
         if q and q.strip():
-            search_token = f"%{q.strip().lower()}%"
+            q_clean = q.strip()[:256]
+            search_token = f"%{q_clean.lower()}%"
             q_clauses = []
             for col in self._columns:
-                q_clauses.append(f'LOWER(CAST("{col}" AS VARCHAR)) LIKE ?')
+                safe_col = _safe_sql_ident(col)
+                q_clauses.append(f"LOWER(CAST({safe_col} AS VARCHAR)) LIKE ?")
                 params.append(search_token)
             where_clauses.append(f"({' OR '.join(q_clauses)})")
 
@@ -212,7 +220,8 @@ class DatasetStore:
             if sort_col not in self._columns:
                 raise ValueError(f"Unknown sort column '{sort_col}'. Valid columns: {self._columns}")
             direction = "DESC" if descending else "ASC"
-            sort_sql = f'ORDER BY "{sort_col}" {direction}'
+            safe_sort_col = _safe_sql_ident(sort_col)
+            sort_sql = f"ORDER BY {safe_sort_col} {direction}"
 
         # Count query
         count_sql = f"SELECT COUNT(*) FROM {self.table_name} {where_sql}"

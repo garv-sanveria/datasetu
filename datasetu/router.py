@@ -38,6 +38,12 @@ from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel, Field, create_model
 
 from datasetu.db import DatasetStore
+from datasetu.security import (
+    RateLimitMiddleware,
+    RequestSizeLimitMiddleware,
+    SecurityHeadersMiddleware,
+    verify_safe_file_path,
+)
 
 
 def _build_pydantic_record_model(schema: List[Dict[str, str]]) -> Type[BaseModel]:
@@ -84,12 +90,17 @@ def build_app(store: DatasetStore, source_info: Optional[Dict[str, Any]] = None)
         openapi_url="/openapi.json",
     )
 
-    # Enable CORS for local developer tools and offline web interfaces
+    # 1. Defense-in-depth Security & Hardening Middlewares
+    app.add_middleware(SecurityHeadersMiddleware)
+    app.add_middleware(RateLimitMiddleware, max_requests=300, window_seconds=60)
+    app.add_middleware(RequestSizeLimitMiddleware, max_bytes=10 * 1024 * 1024)
+
+    # 2. CORS configuration for local developer tools and offline web interfaces
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
         allow_credentials=True,
-        allow_methods=["*"],
+        allow_methods=["GET", "POST", "HEAD", "OPTIONS"],
         allow_headers=["*"],
     )
 
@@ -141,11 +152,17 @@ def build_app(store: DatasetStore, source_info: Optional[Dict[str, Any]] = None)
     @app.get("/download/ppt", include_in_schema=False)
     @app.get("/download/deck", include_in_schema=False)
     def download_ppt():
-        ppt_file = Path(__file__).parent.parent / "docs" / "DataSetu_DevForge_Finals.pptx"
-        if not ppt_file.exists():
+        allowed_dir = (Path(__file__).parent.parent / "docs").resolve()
+        target_file = allowed_dir / "DataSetu_DevForge_Finals.pptx"
+        try:
+            safe_file = verify_safe_file_path(target_file, allowed_dir)
+        except PermissionError:
+            raise HTTPException(status_code=403, detail="Access denied: directory traversal prohibited")
+        except FileNotFoundError:
             raise HTTPException(status_code=404, detail="PPTX file not found")
+
         return FileResponse(
-            path=str(ppt_file),
+            path=str(safe_file),
             filename="DataSetu_DevForge_Finals.pptx",
             media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
         )
@@ -197,6 +214,12 @@ def build_app(store: DatasetStore, source_info: Optional[Dict[str, Any]] = None)
                         filters[param_key] = param_val
                 else:
                     filters[param_key] = param_val
+
+        # Input validation & sanitization
+        if q and len(q) > 256:
+            raise HTTPException(status_code=400, detail="Search query 'q' cannot exceed 256 characters.")
+        if fields and len(fields) > 1000:
+            raise HTTPException(status_code=400, detail="Requested fields parameter exceeds maximum length.")
 
         field_list = [f.strip() for f in fields.split(",") if f.strip()] if fields else None
 
