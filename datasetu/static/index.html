@@ -958,14 +958,16 @@ with DatasetuClient("http://localhost:8000") as client:
         }
 
         tbody.innerHTML = allRecordsCache.map(r => {
-          // Identify columns dynamically
-          const stateVal = r['Administrative Hierarchy - State'] || r['state'] || '-';
-          const distVal = r['Administrative Hierarchy - District'] || r['district'] || '-';
-          const schemeVal = r['Scheme Information - Scheme Name'] || r['Scheme Portfolio - Scheme Name'] || r['scheme_name'] || '-';
-          const allocVal = r['Financial Overview - Sanctioned Allocation (Rs.)'] || r['Financial Allocations (INR) - Sanctioned Central Allocation'] || r['sanctioned_allocation_inr'];
-          const spendVal = r['Financial Overview - Total Expenditure'] || r['Expenditure Incurred - Total Expenditure'] || r['total_expenditure_inr'];
-          const beneVal = r['Impact & Beneficiaries - Beneficiaries Reached'] || r['beneficiaries_reached'];
-          const statusVal = r['Impact & Beneficiaries - Utilization Status'] || r['Audit Lifecycle - Utilization Status'] || r['utilization_status'] || '-';
+          // Identify columns dynamically across all datasets
+          const stateVal = r['Administrative Hierarchy - State'] || r['Administrative Units - State Name'] || r['state'] || '-';
+          const distVal = r['Administrative Hierarchy - District'] || r['Administrative Units - District Name'] || r['district'] || '-';
+          const sectorVal = r['Governance Portfolio - Sector Category'] || r['sector'] || '';
+          const rawScheme = r['Scheme Information - Scheme Name'] || r['Scheme Portfolio - Scheme Name'] || r['Governance Portfolio - National Flagship Scheme'] || r['scheme_name'] || '-';
+          const schemeVal = sectorVal ? `<span style="font-size:10.5px; color:var(--primary); display:block;">${sectorVal}</span>${rawScheme}` : rawScheme;
+          const allocVal = r['Financial Overview - Sanctioned Allocation (Rs.)'] || r['Financial Allocations (INR) - Sanctioned Central Allocation'] || r['Financial Provisions (INR) - Central Sanctioned Allocation'] || r['sanctioned_allocation_inr'];
+          const spendVal = r['Financial Overview - Total Expenditure'] || r['Expenditure Incurred - Total Expenditure'] || r['Execution & Audit - Actual Expenditure Incurred'] || r['total_expenditure_inr'];
+          const beneVal = r['Impact & Beneficiaries - Beneficiaries Reached'] || r['Impact Metrics - Beneficiaries Reached'] || r['beneficiaries_reached'];
+          const statusVal = r['Impact & Beneficiaries - Utilization Status'] || r['Audit Lifecycle - Utilization Status'] || r['Audit & Monitoring - Performance Lifecycle Status'] || r['utilization_status'] || '-';
 
           // LGD matching tags
           const lgdCode = r['lgd_district_code'];
