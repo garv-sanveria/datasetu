@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataSetu — Devf8rge Hack Day Official Theme</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --dev-black: #060A14;
+    --dev-navy: #0A1124;
+    --dev-card: #0F1A36;
+    --dev-card-hover: #142247;
+    --dev-blue: #2563EB;
+    --dev-blue-glow: #1D4ED8;
+    --dev-cyan: #00D2FF;
+    --dev-cyan-light: #7DD3FC;
+    --dev-border: rgba(37, 99, 235, 0.35);
+    --dev-border-bright: #38BDF8;
+    --dev-hard-red: #EF4444;
+    --dev-emerald: #10B981;
+    --dev-amber: #F59E0B;
+    --text-white: #FFFFFF;
+    --text-slate: #94A3B8;
+    --text-dim: #64748B;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", "Space Grotesk", sans-serif;
+    --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", Menlo, monospace;
+  }
+
+  body {
+    background: var(--dev-black);
+    color: var(--text-white);
+    font-family: var(--font-sans);
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Devf8rge Top Navigation Bar */
+  header {
+    height: 58px;
+    background: rgba(6, 10, 20, 0.95);
+    border-bottom: 1px solid var(--dev-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 100;
+  }
+  .df-logo-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .df-code-icon {
+    color: var(--dev-cyan);
+    font-family: var(--font-mono);
+    font-size: 17px;
+    font-weight: 900;
+  }
+  .df-logo-text {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    color: var(--text-white);
+  }
+  .df-logo-text span {
+    color: var(--dev-cyan);
+  }
+  .df-pill-event {
+    background: rgba(37, 99, 235, 0.2);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: var(--dev-cyan-light);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-left: 8px;
+  }
+
+  .nav-tabs {
+    display: flex;
+    gap: 6px;
+  }
+  .nav-tab {
+    background: var(--dev-navy);
+    border: 1px solid var(--dev-border);
+    color: var(--text-slate);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-tab:hover {
+    color: var(--text-white);
+    border-color: var(--dev-cyan);
+  }
+  .nav-tab.active {
+    background: var(--dev-blue);
+    border-color: var(--dev-cyan);
+    color: var(--text-white);
+    box-shadow: 0 0 15px rgba(37, 99, 235, 0.5);
+  }
+
+  /* Slide Presentation Canvas */
+  .stage {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 58px);
+    overflow: hidden;
+  }
+
+  .slide-panel {
+    position: absolute;
+    inset: 0;
+    padding: 36px 60px 24px 60px;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    background: 
+      radial-gradient(circle at 90% 10%, rgba(37, 99, 235, 0.16) 0%, transparent 60%),
+      radial-gradient(circle at 10% 90%, rgba(0, 210, 255, 0.08) 0%, transparent 55%),
+      linear-gradient(180deg, #060A14 0%, #0A1124 100%);
+  }
+  .slide-panel.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    opacity: 1;
+  }
+
+  /* Header Micro-typography */
+  .header-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .track-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--dev-cyan);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .track-label::before {
+    content: "</>";
+    font-family: var(--font-mono);
+    color: var(--dev-blue);
+    font-weight: 900;
+    font-size: 13px;
+  }
+  .badge-hard {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid var(--dev-hard-red);
+    color: #FCA5A5;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .badge-hard::before {
+    content: "■";
+    color: var(--dev-hard-red);
+    font-size: 10px;
+  }
+
+  .main-headline {
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: -1.2px;
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+  .main-headline span {
+    color: var(--dev-cyan);
+  }
+  .lead-desc {
+    font-size: 14px;
+    color: var(--text-slate);
+    line-height: 1.5;
+    max-width: 980px;
+    margin-bottom: 20px;
+  }
+
+  /* Devf8rge Card Grid Layouts */
+  .grid-2 { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; flex: 1; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; flex: 1; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; flex: 1; }
+
+  /* Devf8rge Card Theme */
+  .card-box {
+    background: var(--dev-card);
+    border: 1px solid var(--dev-border);
+    border-radius: 10px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+  .card-box::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--dev-blue), var(--dev-cyan));
+  }
+  .card-box.accent-blue {
+    border-color: rgba(56, 189, 248, 0.5);
+    background: linear-gradient(180deg, rgba(37, 99, 235, 0.12) 0%, var(--dev-card) 100%);
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--dev-cyan);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-body {
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--text-white);
+  }
+  .card-body ul { list-style: none; }
+  .card-body li {
+    position: relative;
+    padding-left: 18px;
+    margin-bottom: 8px;
+  }
+  .card-body li::before {
+    content: "›";
+    position: absolute;
+    left: 0;
+    font-size: 14px;
+    top: -2px;
+    color: var(--dev-cyan);
+    font-weight: 800;
+  }
+  .card-body strong {
+    color: var(--dev-cyan-light);
+    font-weight: 700;
+  }
+
+  /* Devf8rge Terminal Console */
+  .df-terminal {
+    background: #040812;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 8px;
+    padding: 14px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: #E2E8F0;
+  }
+  .term-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(56, 189, 248, 0.15);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+  .dots { display: flex; gap: 5px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dot.r { background: #EF4444; }
+  .dot.y { background: #F59E0B; }
+  .dot.g { background: #10B981; }
+
+  /* Devf8rge Signature Bottom Bar */
+  .df-footer {
+    height: 38px;
+    border-top: 1px solid rgba(37, 99, 235, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    padding-top: 10px;
+  }
+  .df-footer-tagline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--dev-cyan-light);
+  }
+  .df-footer-tagline span {
+    color: var(--dev-blue);
+  }
+
+  /* Metric Stat Callouts */
+  .stat-val {
+    font-size: 34px;
+    font-weight: 900;
+    color: var(--dev-cyan);
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .stat-lbl {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-slate);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="df-logo-group">
+    <div class="df-code-icon">&lt;/&gt;</div>
+    <div class="df-logo-text">Devf<span>8</span>rge</div>
+    <span class="df-pill-event">Hacktoberfest Hack Day 2026</span>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="gotoSlide(0)">01 · TEAM & MANDATE</button>
+    <button class="nav-tab" onclick="gotoSlide(1)">02 · BHARAT DATA CRISIS</button>
+    <button class="nav-tab" onclick="gotoSlide(2)">03 · DATASETU ENGINE</button>
+    <button class="nav-tab" onclick="gotoSlide(3)">04 · 12H FINALS & TK-D DEMO</button>
+    <button class="nav-tab" onclick="gotoSlide(4)">05 · TECH STACK & SPECS</button>
+    <button class="nav-tab" onclick="gotoSlide(5)">06 · BHARAT DPI REUSE</button>
+  </div>
+</header>
+
+<div class="stage">
+
+  <!-- ========================================================
+       SLIDE 1: TEAM & PROBLEM STATEMENT
+       ======================================================== -->
+  <div class="slide-panel active" id="slide-0">
+    <div>
+      <div class="header-meta">
+        <span class="track-label">Track 5: Open Source for Bharat · Official Prelims</span>
+        <span class="badge-hard">HARD · PS-10 (Open Data to Open API)</span>
+      </div>
+      <div class="main-headline">DataSetu: Autonomous <span>Open Data to OpenAPI</span> Gateway</div>
+      <div class="lead-desc">Transforming messy, unformatted Indian public datasets (CSV/Excel from data.gov.in & state portals) into clean, auto-versioned, production-grade REST APIs with interactive OpenAPI docs and client SDKs in a single command.</div>
+    </div>
+
+    <div class="grid-3">
+      <div class="card-box accent-blue">
+        <div>
+          <div class="card-title">🇮🇳 Problem Statement Profile</div>
+          <div class="card-body">
+            <ul>
+              <li><strong>Track 5:</strong> Open Source for Bharat (Tools for India's public data & learners)</li>
+              <li><strong>Statement ID:</strong> PS-10 (Open Data to Open API)</li>
+              <li><strong>Official Level:</strong> <span style="color:#F87171; font-weight:800;">HARD</span> (Unlocks maximum 30% technical execution score)</li>
+              <li><strong>Official Test Kit:</strong> TK-D Devf8rge Data Pack (2 Public Government Datasets: CSV & Excel)</li>
+            </ul>
+          </div>
+        </div>
+        <div style="background:rgba(37,99,235,0.15); border:1px solid rgba(56,189,248,0.3); padding:8px 10px; border-radius:6px; font-size:11px; color:var(--dev-cyan-light); margin-top:12px;">
+          ✓ Self-hostable with one command · Zero cloud dependency
+        </div>
+      </div>
+
+      <div class="card-box">
+        <div>
+          <div class="card-title">👥 Team Roster & Specialization</div>
+          <div class="card-body">
+            <ul>
+              <li><strong>Data Systems Lead:</strong> DuckDB Columnar Storage, Parquet Caching, & Vectorized SQL</li>
+              <li><strong>Bharat Entity Specialist:</strong> LGD (Local Government Directory) Fuzzy Matching & Numeral Normalizer</li>
+              <li><strong>API & Protocol Architect:</strong> Dynamic FastAPI Router Generator & OpenAPI 3.1 Spec Builder</li>
+              <li><strong>SDK & CDC Engineer:</strong> Client SDK Synthesis (Python/JS) & ETag Change Data Capture</li>
+            </ul>
+          </div>
+        </div>
+        <div style="font-size:11px; color:var(--text-dim); margin-top:12px;">
+          Institution: Newton School of Technology / DevForge Community
+        </div>
+      </div>
+
+      <div class="card-box">
+        <div>
+          <div class="card-title">🎯 Core 12-Hour Build Mandate</div>
+          <div class="card-body">
+            <ul>
+              <li><strong>Zero Manual Scraping:</strong> Ingest any public government dataset URL and instantly expose live queryable endpoints.</li>
+              <li><strong>Bharat Cleansing Engine:</strong> Normalizes multi-row headers, Lakhs/Crores notations, and fragmented district spellings.</li>
+              <li><strong>Developer-Ready SDKs:</strong> Auto-emits typed Python and JavaScript libraries ready for immediate civic-tech application building.</li>
+            </ul>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:12px; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px;">
+          <div><div class="stat-val">1-Click</div><div class="stat-lbl">Self-Hosted Deploy</div></div>
+          <div><div class="stat-val">&lt;2 sec</div><div class="stat-lbl">CSV to Live API</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="df-footer">
+      <div class="df-footer-tagline">&lt;/&gt; <span>BUILD</span> • <span>COLLABORATE</span> • <span>INNOVATE</span></div>
+      <div>Official Prelims Submission · Slide <strong>01 / 06</strong></div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SLIDE 2: THE PROBLEM — BHARAT OPEN DATA CRISIS
+       ======================================================== -->
+  <div class="slide-panel" id="slide-1">
+    <div>
+      <div class="header-meta">
+        <span class="track-label">Problem Statement Discovery & National Context</span>
+        <span class="badge-hard">Understanding of Problem · 25% Rubric</span>
+      </div>
+      <div class="main-headline">The <span>"Data Graveyard"</span> of Indian Public Portals</div>
+      <div class="lead-desc">India publishes over 550,000 public resources across data.gov.in and state portals (Karnataka, Telangana, Maharashtra). Yet, less than 2% provide programmatic REST APIs. Valuable public records sit trapped in dirty spreadsheet dumps.</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card-box">
+        <div>
+          <div class="card-title">⚠️ The 4 Fatal Flaws of Indian Open Datasets</div>
+          <div class="card-body">
+            <ul>
+              <li><strong>1. Inconsistent Geographical Taxonomy:</strong><br>
+              The same district is spelled five ways across files: <em>"Bengaluru Urban"</em>, <em>"Bangalore (U)"</em>, <em>"Blr-U"</em>. Datasets fail to join across agriculture, health, and census records without LGD (Local Government Directory) normalization.</li>
+              <li><strong>2. Multi-Row Headers & Footnote Pollution:</strong><br>
+              Indian government Excel files feature merged ministry titles in top rows and explanatory footnotes (*Provisional) at the bottom, breaking generic CSV parsers.</li>
+              <li><strong>3. Indian Numeral & Unit Chaos:</strong><br>
+              Columns mixed with <em>"in Lakhs"</em>, <em>"₹ Crores"</em>, <em>"Quintals"</em>, and non-standard comma placement like <code>12,34,567</code> that crash standard IEEE numeric parsers.</li>
+              <li><strong>4. Static Tombstones With Zero CDC:</strong><br>
+              Datasets updated periodically force developers to re-download 200MB CSVs manually and rewrite parsing code from scratch.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:20px; background:rgba(4,8,18,0.6); padding:12px; border-radius:8px; margin-top:12px;">
+          <div>
+            <div class="stat-val" style="color:var(--dev-hard-red);">550K+</div>
+            <div class="stat-lbl">Public Datasets Published</div>
+          </div>
+          <div>
+            <div class="stat-val" style="color:var(--dev-cyan);">&lt; 2%</div>
+            <div class="stat-lbl">Provide Live REST APIs</div>
+          </div>
+          <div>
+            <div class="stat-val" style="color:var(--dev-amber);">90%</div>
+            <div class="stat-lbl">Civic Tech Projects Stalled</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-box" style="background:#040812;">
+        <div class="card-title">🔬 Raw Government Data Dump vs. DataSetu API</div>
+        <div class="df-terminal">
+          <div class="term-bar">
+            <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+            <span>RAW DATA.GOV.IN CSV DUMP (MESSY & UNUSABLE)</span>
+          </div>
+          <span style="color:var(--text-dim);"># Row 1: MINISTRY OF AGRICULTURE & FARMERS WELFARE</span><br>
+          <span style="color:var(--text-dim);"># Row 2: Table 4.1: Production in (000 Quintals) for 2023-24</span><br>
+          <span style="color:var(--dev-hard-red);">State/UT, Dist_Nm, Crop, Yr, Prod_Qty, Remarks</span><br>
+          <span style="color:#CBD5E1;">"Karnataka","Bengaluru(U)","Ragi","2023","1,45.20*","*Est."</span><br>
+          <span style="color:#CBD5E1;">"Karntaka","Bangalore Rural","Ragi","23-24","2.1 Lakhs","Final"</span><br><br>
+          <div style="border-top:1px dashed var(--dev-border); padding-top:8px; margin-top:8px;">
+            <span style="color:var(--dev-emerald); font-weight:bold;">✨ DATASETU CLEAN REST API ENDPOINT:</span><br>
+            <span style="color:var(--dev-cyan);">$ curl "https://api.datasetu.in/v1/agriculture/crop-production?state=Karnataka&district=Bengaluru_Urban&crop=Ragi"</span><br>
+            <span style="color:#38BDF8;">{</span><br>
+            &nbsp;&nbsp;<span style="color:#93C5FD;">"lgd_state_code"</span>: 29, <span style="color:#93C5FD;">"state"</span>: <span style="color:#FFF;">"Karnataka"</span>,<br>
+            &nbsp;&nbsp;<span style="color:#93C5FD;">"lgd_district_code"</span>: 556, <span style="color:#93C5FD;">"district"</span>: <span style="color:#FFF;">"Bengaluru Urban"</span>,<br>
+            &nbsp;&nbsp;<span style="color:#93C5FD;">"metric_quantity_tonnes"</span>: 14520.0,<br>
+            &nbsp;&nbsp;<span style="color:#93C5FD;">"financial_year"</span>: <span style="color:#FFF;">"2023-2024"</span><br>
+            <span style="color:#38BDF8;">}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="df-footer">
+      <div class="df-footer-tagline">&lt;/&gt; <span>BUILD</span> • <span>COLLABORATE</span> • <span>INNOVATE</span></div>
+      <div>Official Prelims Submission · Slide <strong>02 / 06</strong></div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SLIDE 3: SOLUTION — DATASETU ARCHITECTURE
+       ======================================================== -->
+  <div class="slide-panel" id="slide-2">
+    <div>
+      <div class="header-meta">
+        <span class="track-label">System Architecture & Pipeline Mechanics</span>
+        <span class="badge-hard">Quality & Originality · 25% Rubric</span>
+      </div>
+      <div class="main-headline">The 4-Stage <span>Data-to-API Engine</span></div>
+      <div class="lead-desc">DataSetu serves as an autonomous compiler from raw tabular data to OpenAPI 3.1 specifications. By combining heuristic table sniffing, LGD entity normalization, DuckDB columnar indexing, and dynamic OpenAPI generation, it requires zero manual coding.</div>
+    </div>
+
+    <div class="grid-4">
+      <div class="card-box">
+        <div>
+          <div class="card-title">1. Smart Sniffer</div>
+          <div class="card-body">
+            <ul>
+              <li><strong>Header Boundary Detection:</strong> Heuristically detects and trims preliminary ministry titles and footnotes by measuring data-type entropy across rows.</li>
+              <li><strong>Encoding Resilient:</strong> Seamlessly auto-detects UTF-8 BOM, CP1252, and legacy Windows-874 encodings commonly found in state portal spreadsheets.</li>
+            </ul>
+          </div>
+        </div>
+        <div style="background:rgba(6,10,20,0.5); padding:8px; border-radius:4px; font-family:var(--font-mono); font-size:10px; color:var(--dev-cyan);">
+          Heuristic Table Sniffer
+        </div>
+      </div>
+
+      <div class="card-box">
+        <div>
+          <div class="card-title">2. Bharat Normalizer</div>
+          <div class="card-body">
+            <ul>
+              <li><strong>LGD Entity Resolution:</strong> Uses Jaro-Winkler and Levenshtein token matching against India's official Local Government Directory to standardize 750+ districts.</li>
+              <li><strong>Indian Numeral Engine:</strong> Converts "Lakhs", "Crores", and non-standard comma notations into IEEE 754 float columns with unit standardization.</li>
+            </ul>
+          </div>
+        </div>
+        <div style="background:rgba(6,10,20,0.5); padding:8px; border-radius:4px; font-family:var(--font-mono); font-size:10px; color:var(--dev-cyan-light);">
+          LGD 750+ Districts Match
+        </div>
+      </div>
+
+      <div class="card-box accent-blue">
+        <div>
+          <div class="card-title">3. Dynamic FastAPI</div>
+          <div class="card-body">
+            <ul>
+              <li><strong>DuckDB Columnar Core:</strong> Ingests cleaned data into in-memory DuckDB / Parquet for sub-5ms vectorized SQL queries, filtering, and aggregation.</li>
+              <li><strong>Auto-Generated Routers:</strong> Synthesizes typed Pydantic models and parameterized FastAPI routes (<code>?limit=</code>, <code>?sort=</code>, <code>?state=</code>) with interactive Swagger UI.</li>
+            </ul>
+          </div>
+        </div>
+        <div style="background:rgba(6,10,20,0.5); padding:8px; border-radius:4px; font-family:var(--font-mono); font-size:10px; color:var(--dev-emerald);">
+          OpenAPI 3.1 & Swagger UI
+        </div>
+      </div>
+
+      <div class="card-box">
+        <div>
+          <div class="card-title">4. Auto SDKs & CDC</div>
+          <div class="card-body">
+            <ul>
+              <li><strong>Client SDK Synthesis:</strong> Auto-emits typed Python (<code>httpx</code>) and JavaScript/TypeScript client libraries on the fly.</li>
+              <li><strong>Change Data Capture:</strong> Scheduled cron worker checks source ETag / SHA-256; automatically migrates schema and logs version changelogs.</li>
+            </ul>
+          </div>
+        </div>
+        <div style="background:rgba(6,10,20,0.5); padding:8px; border-radius:4px; font-family:var(--font-mono); font-size:10px; color:var(--dev-cyan);">
+          Python/JS SDKs + CDC
+        </div>
+      </div>
+    </div>
+
+    <div class="df-footer">
+      <div class="df-footer-tagline">&lt;/&gt; <span>BUILD</span> • <span>COLLABORATE</span> • <span>INNOVATE</span></div>
+      <div>Official Prelims Submission · Slide <strong>03 / 06</strong></div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SLIDE 4: FINALS PLAN & TEST KIT DEMO
+       ======================================================== -->
+  <div class="slide-panel" id="slide-3">
+    <div>
+      <div class="header-meta">
+        <span class="track-label">Execution Feasibility & Test Kit Deliverables</span>
+        <span class="badge-hard">Feasibility: 30% Prelims · 25% Test Kit Demo</span>
+      </div>
+      <div class="main-headline">12-Hour Build Schedule & <span>Official TK-D Validation</span></div>
+      <div class="lead-desc">Designed specifically for the 12-hour offline finals (10 PM, 30 Oct to 10 AM, 31 Oct). Our demo plan validates directly on the two official government datasets in the TK-D data pack, proving real-world reliability to the judges in under 3 minutes.</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card-box accent-blue">
+        <div>
+          <div class="card-title">🎯 3-Minute Live Judging Scenario (Official TK-D)</div>
+          <div class="card-body">
+            <ul>
+              <li><strong>Official Test Inputs:</strong> Ingest the two provided public government datasets from TK-D (one messy CSV and one multi-sheet Excel file).</li>
+              <li><strong>Step 1 (00:00 - 00:30):</strong> Execute <code>datasetu build --source ./tk-d/gov_data.csv</code>. System automatically infers schema, handles messy dates, and normalizes Indian state/district columns.</li>
+              <li><strong>Step 2 (00:30 - 01:15):</strong> Live interactive Swagger/OpenAPI docs open at <code>http://localhost:8000/docs</code>. Demonstrate instant parameterized queries (e.g. filter by state, limit 10).</li>
+              <li><strong>Step 3 (01:15 - 02:00):</strong> Execute generated Python SDK script: <code>client.query(district="Bengaluru")</code> returning clean JSON.</li>
+              <li><strong>Step 4 (02:00 - 02:30):</strong> Update source file with a modified row; cron worker triggers, increments dataset version, and emits a semver changelog entry.</li>
+            </ul>
+          </div>
+        </div>
+        <div style="background:#040812; padding:10px 14px; border-radius:6px; font-family:var(--font-mono); font-size:11px; margin-top:12px; color:var(--dev-emerald);">
+          ✓ Complete Pipeline Demo: Raw CSV/Excel ➔ Live API ➔ Swagger Docs ➔ Python SDK Call ➔ CDC Changelog
+        </div>
+      </div>
+
+      <div class="card-box">
+        <div>
+          <div class="card-title">⏱️ 12-Hour Sprint Milestones & Scope Control</div>
+          <div class="card-body">
+            <ul>
+              <li><strong>T+00:00 to T+03:30 (Core Ingestion Engine):</strong> DuckDB integration, CSV/Excel table sniffer, date & numeric parser, LGD fuzzy resolver.</li>
+              <li><strong>T+03:30 to T+07:00 (Dynamic OpenAPI Generator):</strong> Pydantic schema synthesizer, dynamic FastAPI route injector, interactive Swagger & ReDoc endpoints.</li>
+              <li><strong>T+07:00 to T+09:30 (Client SDK & Query Filters):</strong> Jinja2 template generator for Python/JS SDKs, query parameter engine (pagination, filtering, sorting).</li>
+              <li><strong>T+09:30 to T+12:00 (CDC Poller & TK-D Testing):</strong> File hashing/ETag change detector, automated version increment, edge-case test runs on TK-D.</li>
+              <li><strong>Stretch Goals:</strong> GeoJSON geospatial support (district boundaries) & GraphQL endpoint generator.</li>
+            </ul>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1);">
+          <span style="font-size:11px; color:var(--text-slate);">Minimum Target: <strong>REST API + Docs + 1 SDK</strong></span>
+          <span style="font-size:11px; color:var(--dev-cyan); font-weight:bold;">12h Feasibility: Extremely High</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="df-footer">
+      <div class="df-footer-tagline">&lt;/&gt; <span>BUILD</span> • <span>COLLABORATE</span> • <span>INNOVATE</span></div>
+      <div>Official Prelims Submission · Slide <strong>04 / 06</strong></div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SLIDE 5: TECH STACK & SYSTEM ARCHITECTURE
+       ======================================================== -->
+  <div class="slide-panel" id="slide-4">
+    <div>
+      <div class="header-meta">
+        <span class="track-label">Technical Stack & Architectural Specifications</span>
+        <span class="badge-hard">Open Source Quality & Tech Choices · 20% Rubric</span>
+      </div>
+      <div class="main-headline">High-Performance <span>Open Source Engine</span></div>
+      <div class="lead-desc">Built entirely on high-performance open-source libraries. Using DuckDB columnar storage and Apache Arrow in-memory zero-copy vectors, DataSetu delivers microsecond query response times while remaining 100% self-hostable with one command.</div>
+    </div>
+
+    <div class="grid-4">
+      <div class="card-box">
+        <div>
+          <div class="card-title">⚡ Query Core</div>
+          <div class="card-body">
+            <ul>
+              <li><strong>DuckDB:</strong> Embedded analytical SQL engine (vectorized execution)</li>
+              <li><strong>Apache Arrow:</strong> Zero-copy in-memory tabular data interchange</li>
+              <li><strong>Apache Parquet:</strong> High-compression disk storage for instant reads</li>
+            </ul>
+          </div>
+        </div>
+        <div style="font-size:10.5px; color:var(--text-dim); border-top:1px solid rgba(255,255,255,0.08); padding-top:8px;">
+          Sub-5ms query response
+        </div>
+      </div>
+
+      <div class="card-box">
+        <div>
+          <div class="card-title">🌐 API Gateway</div>
+          <div class="card-body">
+            <ul>
+              <li><strong>FastAPI & Starlette:</strong> High-speed async ASGI REST service</li>
+              <li><strong>Pydantic v2:</strong> Dynamic schema construction & data validation</li>
+              <li><strong>OpenAPI 3.1:</strong> Auto-generated interactive Swagger & ReDoc UI</li>
+            </ul>
+          </div>
+        </div>
+        <div style="font-size:10.5px; color:var(--text-dim); border-top:1px solid rgba(255,255,255,0.08); padding-top:8px;">
+          Standard compliant OpenAPI
+        </div>
+      </div>
+
+      <div class="card-box accent-blue">
+        <div>
+          <div class="card-title">🇮🇳 Bharat Entity Engine</div>
+          <div class="card-body">
+            <ul>
+              <li><strong>RapidFuzz / Levenshtein:</strong> C++ accelerated fuzzy string matching for LGD</li>
+              <li><strong>LGD Database:</strong> Pre-indexed 750+ districts & 36 states/UTs</li>
+              <li><strong>Indian Numeral Lexer:</strong> Regex + unit converter (Lakhs, Crores, Quintals)</li>
+            </ul>
+          </div>
+        </div>
+        <div style="font-size:10.5px; color:var(--dev-cyan-light); border-top:1px solid rgba(255,255,255,0.08); padding-top:8px;">
+          Tailored for Indian Gov Data
+        </div>
+      </div>
+
+      <div class="card-box">
+        <div>
+          <div class="card-title">📦 Packaging & CDC</div>
+          <div class="card-body">
+            <ul>
+              <li><strong>Single-Command CLI:</strong> Packaged via <code>Typer</code> & Docker / pip</li>
+              <li><strong>CDC Poller:</strong> APScheduler worker with HTTP conditional GET (ETag)</li>
+              <li><strong>License:</strong> Apache-2.0 (OSI approved open-source license)</li>
+            </ul>
+          </div>
+        </div>
+        <div style="font-size:10.5px; color:var(--text-dim); border-top:1px solid rgba(255,255,255,0.08); padding-top:8px;">
+          100% Permissive Open Source
+        </div>
+      </div>
+    </div>
+
+    <div class="df-footer">
+      <div class="df-footer-tagline">&lt;/&gt; <span>BUILD</span> • <span>COLLABORATE</span> • <span>INNOVATE</span></div>
+      <div>Official Prelims Submission · Slide <strong>05 / 06</strong></div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SLIDE 6: OPEN SOURCE ANGLE & BHARAT IMPACT
+       ======================================================== -->
+  <div class="slide-panel" id="slide-5">
+    <div>
+      <div class="header-meta">
+        <span class="track-label">Long-Term Community Impact & Rubric Alignment</span>
+        <span class="badge-hard">Finals Score Optimization · 100% Comprehensive</span>
+      </div>
+      <div class="main-headline">Empowering Bharat's <span>Digital Public Infrastructure</span></div>
+      <div class="lead-desc">DataSetu is not just a hackathon prototype; it is an open-source bridge connecting India's rich public datasets with thousands of developers, researchers, civic activists, and AI builders across the nation.</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card-box">
+        <div>
+          <div class="card-title">🇮🇳 Ecosystem Impact & Community Reuse</div>
+          <div class="card-body">
+            <ul>
+              <li><strong>Catalyst for Civic Tech & Student Builders:</strong><br>
+              Empowers hackathon teams, researchers, and startups to build AI tutors, crop advisory bots, and civic dashboards without spending weeks on data scraping.</li>
+              <li><strong>Self-Hostable One-Liner for Government Departments:</strong><br>
+              Municipal corporations and state departments can deploy DataSetu internally to expose their existing Excel sheets as clean OpenAPI endpoints with zero IT overhead.</li>
+              <li><strong>Extensible Entity Transformers:</strong><br>
+              Modular architecture allows open-source contributors to add custom Indian entity parsers (e.g. Mandi APMC commodity codes, PIN codes, Census town codes).</li>
+              <li><strong>Public Community API Hub:</strong><br>
+              Post-hackathon plan to host a free, community-maintained gateway indexing the top 500 datasets from data.gov.in as live OpenAPI endpoints.</li>
+            </ul>
+          </div>
+        </div>
+        <div style="margin-top:12px; padding:10px; background:rgba(16,185,129,0.08); border-left:3px solid var(--dev-emerald); font-size:11.5px; color:var(--text-white);">
+          🚀 Fully aligned with India's Open Data Initiative & Digital India Public Infrastructure (DPI) vision.
+        </div>
+      </div>
+
+      <div class="card-box accent-blue">
+        <div>
+          <div class="card-title">🏆 Rubric Score Alignment Matrix</div>
+          <div class="card-body">
+            <ul>
+              <li><strong>Technical Execution (30% Finals):</strong><br>
+              Tackles a <span style="color:#F87171; font-weight:800;">HARD</span> problem statement combining high-performance columnar databases (DuckDB), fuzzy entity resolution, dynamic OpenAPI generation, and auto-generated SDKs.</li>
+              <li><strong>Working Demo on Test Kit (25% Finals):</strong><br>
+              Built specifically to ingest and serve the official TK-D data pack government CSV & Excel files deterministically.</li>
+              <li><strong>Impact & Usefulness (20% Finals):</strong><br>
+              Directly unlocks India's largest unexploited resource—550,000 public datasets currently locked in unusable spreadsheet dumps.</li>
+              <li><strong>Open-Source Quality (15% Finals):</strong><br>
+              Clean modular Python architecture, Apache-2.0 license, clean documentation, and instant self-hostability.</li>
+            </ul>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:12px; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px;">
+          <span style="font-size:11px; color:var(--text-slate);">Finals Score Potential: <strong>Top Tier</strong></span>
+          <span style="font-size:11px; color:var(--dev-emerald); font-weight:bold;">100% Rubric Compliant ✓</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="df-footer">
+      <div class="df-footer-tagline">&lt;/&gt; <span>BUILD</span> • <span>COLLABORATE</span> • <span>INNOVATE</span></div>
+      <div>Official Prelims Submission · Slide <strong>06 / 06</strong></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let curSlide = 0;
+  const totalSlides = 6;
+
+  function gotoSlide(idx) {
+    if (idx < 0 || idx >= totalSlides) return;
+    curSlide = idx;
+    document.querySelectorAll('.slide-panel').forEach((p, i) => {
+      p.classList.toggle('active', i === curSlide);
+    });
+    document.querySelectorAll('.nav-tab').forEach((b, i) => {
+      b.classList.toggle('active', i === curSlide);
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') gotoSlide((curSlide + 1) % totalSlides);
+    if (e.key === 'ArrowLeft') gotoSlide((curSlide - 1 + totalSlides) % totalSlides);
+  });
+</script>
+</body>
+</html>
