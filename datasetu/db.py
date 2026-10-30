@@ -87,6 +87,40 @@ class DatasetStore:
                 except Exception:
                     pass
 
+        self._create_clean_views()
+
+    def _create_clean_views(self) -> None:
+        """Creates or replaces 'dataset' and 'current' views with clean semantic aliases."""
+        alias_pairs = []
+        standard_aliases = [
+            "state",
+            "district",
+            "sector",
+            "scheme",
+            "allocation",
+            "allocation_inr",
+            "expenditure",
+            "expenditure_inr",
+            "beneficiaries",
+            "status",
+        ]
+        seen_aliases = set(self._columns)
+        for alias in standard_aliases:
+            if alias in seen_aliases:
+                continue
+            resolved = self.resolve_column(alias)
+            if resolved:
+                safe_col = _safe_sql_ident(resolved)
+                alias_pairs.append(f"{safe_col} AS {alias}")
+                seen_aliases.add(alias)
+
+        select_clause = "*, " + ", ".join(alias_pairs) if alias_pairs else "*"
+        try:
+            self.conn.execute(f"CREATE OR REPLACE VIEW dataset AS SELECT {select_clause} FROM {self.table_name}")
+            self.conn.execute("CREATE OR REPLACE VIEW current AS SELECT * FROM dataset")
+        except Exception:
+            pass
+
     def swap(self, new_table: pa.Table, new_report: Any = None) -> str:
         """Atomically replaces the active table in DuckDB and increments version."""
         # Calculate new semantic version (increment patch)
@@ -126,6 +160,8 @@ class DatasetStore:
                     self.conn.execute(f"CREATE INDEX IF NOT EXISTS {idx_name} ON {self.table_name} ({safe_col})")
                 except Exception:
                     pass
+
+        self._create_clean_views()
 
         self._changelog.append({
             "version": self.version,

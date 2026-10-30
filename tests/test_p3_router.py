@@ -218,3 +218,39 @@ def test_cdc_trigger_and_status(api_client: TestClient):
     status_data = resp_status.json()
     assert status_data["cdc_worker"] == "active"
     assert status_data["total_swaps"] >= 2
+
+
+def test_sql_execution_endpoint(api_client: TestClient):
+    # Valid SELECT query
+    resp = api_client.post("/v1/sql", json={"query": "SELECT * FROM dataset LIMIT 2"})
+    assert resp.status_code == 200
+    body = resp.json()
+    assert "columns" in body
+    assert "rows" in body
+    assert len(body["rows"]) == 2
+    assert body["query_ms"] >= 0
+
+    # Safety rejection on mutation / dangerous keywords
+    resp_bad = api_client.post("/v1/sql", json={"query": "DROP TABLE dataset"})
+    assert resp_bad.status_code == 403
+    assert "Security violation" in resp_bad.json()["detail"]
+
+
+def test_crosswalk_inspect_endpoint(api_client: TestClient):
+    resp = api_client.get("/v1/crosswalk/inspect/Bijapur?state_hint=Karnataka")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["resolved"] is True
+    assert body["canonical_name"] == "Vijayapura"
+    assert body["district_code"] == 558
+    assert body["state_code"] == 29
+    assert body["match_method"] == "alias"
+
+
+def test_hygiene_scorecard_endpoint(api_client: TestClient):
+    resp = api_client.get("/v1/hygiene")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert "hygiene_score" in body
+    assert "repairs_performed" in body
+    assert len(body["repairs_performed"]) >= 5

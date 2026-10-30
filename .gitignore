@@ -48,6 +48,7 @@ htmlcov/
 # DuckDB / Local runtime temp files
 *.duckdb
 *.duckdb.wal
+/DataSetu_DevForge_Finals.pptx
 *.tmp
 generated/
 .DS_Store

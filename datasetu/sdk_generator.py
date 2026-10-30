@@ -37,8 +37,9 @@ Compiled with Bharat Entity Intelligence and DuckDB columnar execution.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Dict, Generator, List, Optional, Union
+
 import httpx
 
 
@@ -291,7 +292,7 @@ def generate_sdk(openapi: Dict[str, Any], out_path: Union[str, Path]) -> Path:
         title=title,
         version=version,
         fields=fields,
-    )
+    ).strip() + "\n"
 
     out_file.parent.mkdir(parents=True, exist_ok=True)
     out_file.write_text(rendered_code, encoding="utf-8")
