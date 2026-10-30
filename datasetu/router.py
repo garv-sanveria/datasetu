@@ -115,7 +115,7 @@ def build_app(store: DatasetStore, source_info: Optional[Dict[str, Any]] = None)
     )
     app.state.response_model = response_model
 
-    # 1. Self-contained Demo UI
+    # 1. Self-contained Demo UI & Presentation Deck
     @app.get("/", response_class=HTMLResponse, include_in_schema=False)
     @app.get("/demo", response_class=HTMLResponse, include_in_schema=False)
     def serve_demo_page():
@@ -123,6 +123,13 @@ def build_app(store: DatasetStore, source_info: Optional[Dict[str, Any]] = None)
         if not html_file.exists():
             return HTMLResponse("<h1>DataSetu Engine API</h1><p>Visit <a href='/docs'>/docs</a> for Swagger UI.</p>")
         return HTMLResponse(content=html_file.read_text(encoding="utf-8"))
+
+    @app.get("/deck", response_class=HTMLResponse, include_in_schema=False)
+    def serve_deck_page():
+        deck_file = Path(__file__).parent.parent / "docs" / "pitch_deck.html"
+        if deck_file.exists():
+            return HTMLResponse(content=deck_file.read_text(encoding="utf-8"))
+        return HTMLResponse("<h1>Presentation deck not found</h1>")
 
     # 2. Health & Heartbeat
     @app.get("/health", tags=["System"])
