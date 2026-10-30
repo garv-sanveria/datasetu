@@ -34,7 +34,7 @@ from typing import Any, Dict, List, Optional, Type
 
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel, Field, create_model
 
 from datasetu.db import DatasetStore
@@ -130,6 +130,18 @@ def build_app(store: DatasetStore, source_info: Optional[Dict[str, Any]] = None)
         if deck_file.exists():
             return HTMLResponse(content=deck_file.read_text(encoding="utf-8"))
         return HTMLResponse("<h1>Presentation deck not found</h1>")
+
+    @app.get("/download/ppt", include_in_schema=False)
+    @app.get("/download/deck", include_in_schema=False)
+    def download_ppt():
+        ppt_file = Path(__file__).parent.parent / "docs" / "DataSetu_DevForge_Finals.pptx"
+        if not ppt_file.exists():
+            raise HTTPException(status_code=404, detail="PPTX file not found")
+        return FileResponse(
+            path=str(ppt_file),
+            filename="DataSetu_DevForge_Finals.pptx",
+            media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        )
 
     # 2. Health & Heartbeat
     @app.get("/health", tags=["System"])
