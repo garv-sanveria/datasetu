@@ -1,0 +1,14 @@
+# DataSetu - Core Runtime Dependencies
+duckdb>=0.9.0
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+pydantic>=2.0.0
+pyarrow>=14.0.0
+typer>=0.9.0
+rich>=13.0.0
+chardet>=5.2.0
+httpx>=0.25.0
+jinja2>=3.1.0
+openpyxl>=3.1.0
+rapidfuzz>=3.0.0
+watchfiles>=0.21.0

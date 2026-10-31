@@ -75,6 +75,10 @@ def detect_encoding(raw_bytes: bytes) -> Tuple[str, float]:
     conf = float(detected.get("confidence") or 0.0)
 
     # Common portal mapping: windows-1252 / iso-8859-1 often contains CP1252 chars (e.g. \x96 en-dash)
+    # Check for characteristic CP1252 Windows byte patterns (en-dash, em-dash, smart quotes, ellipsis)
+    if any(b in sample for b in (b"\x96", b"\x97", b"\x91", b"\x92", b"\x93", b"\x94", b"\x85")):
+        return "cp1252", max(conf, 0.95)
+
     if enc in ("windows-1252", "iso-8859-1", "iso-8859-2", "latin-1", "ascii"):
         return "cp1252", max(conf, 0.85)
 
@@ -361,9 +365,15 @@ def sniff(source: Union[str, Path]) -> SniffResult:
     try:
         # Escape path for SQL query
         safe_path = str(cleaned_path).replace("'", "''")
-        tbl = con.execute(
+        res = con.execute(
             f"SELECT * FROM read_csv('{safe_path}', all_varchar=true, auto_detect=true)"
-        ).fetch_arrow_table()
+        )
+        if hasattr(res, "to_arrow_table"):
+            tbl = res.to_arrow_table()
+        elif hasattr(res, "fetch_arrow_table"):
+            tbl = res.fetch_arrow_table()
+        else:
+            tbl = res.arrow()
     finally:
         con.close()
 

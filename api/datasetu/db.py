@@ -454,7 +454,13 @@ class DatasetStore:
             {sort_sql}
             LIMIT {limit} OFFSET {offset}
         """
-        table = self.conn.execute(data_sql, params).fetch_arrow_table()
+        res = self.conn.execute(data_sql, params)
+        if hasattr(res, "to_arrow_table"):
+            table = res.to_arrow_table()
+        elif hasattr(res, "fetch_arrow_table"):
+            table = res.fetch_arrow_table()
+        else:
+            table = res.arrow()
         query_ms = round((time.perf_counter() - start_time) * 1000, 2)
         return table, total_rows, query_ms
 

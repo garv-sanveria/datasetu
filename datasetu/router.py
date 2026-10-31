@@ -468,7 +468,13 @@ def build_app(store: DatasetStore, source_info: Optional[Dict[str, Any]] = None)
     )
     def trigger_cdc_update():
         prev_version = store.version
-        active_arrow = store.conn.execute(f"SELECT * FROM {store.table_name}").fetch_arrow_table()
+        res = store.conn.execute(f"SELECT * FROM {store.table_name}")
+        if hasattr(res, "to_arrow_table"):
+            active_arrow = res.to_arrow_table()
+        elif hasattr(res, "fetch_arrow_table"):
+            active_arrow = res.fetch_arrow_table()
+        else:
+            active_arrow = res.arrow()
         t0 = time.perf_counter()
         new_version = store.swap(active_arrow, new_report=store.report)
         swap_ms = round((time.perf_counter() - t0) * 1000.0, 2)
