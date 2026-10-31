@@ -1,109 +1,11 @@
 <!DOCTYPE html><html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>DataSetu (डेटासेतु) - National Open Data to Open API Engine | Government of India</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries">
-// =========================================================================
-// BACKEND REAL-TIME WIRING: CONNECTING STITCH UI TO DUCKDB ENGINE
-// =========================================================================
-
-// CDC Hot-Swap Trigger
-async function triggerCdcHotSwap() {
-  const btn = document.getElementById("btn-upload-label");
-  const prevText = btn.innerText;
-  btn.innerText = "Syncing DuckDB...";
-  try {
-    const res = await fetch("/v1/cdc/trigger", { method: "POST" });
-    const json = await res.json();
-    alert(`⚡ CDC Hot-Swap Succeeded!\n\nDataset: ${json.dataset_file || "Master Governance"}\nTotal Rows Ingested: ${json.records_ingested || "2,500"}\nIngestion Latency: ${json.latency_ms || "<1.2"} ms\nStatus: ${json.status || "ACTIVE"}`);
-  } catch (err) {
-    alert("⚡ CDC Hot-Swap:\n\nSchema invalidation & atomic hot-swap completed across all nodes.\nStatus: ACTIVE_HOTSWAP");
-  } finally {
-    btn.innerText = prevText;
-  }
-}
-
-// Aceternity 3D Perspective Card Engine
-let cardSensitivity = 25;
-
-function updateCardSensitivity(val) {
-  cardSensitivity = parseFloat(val) || 25;
-}
-
-function updateCardPerspective(val) {
-  document.querySelectorAll(".aceternity-card-container").forEach(c => {
-    c.style.perspective = val;
-  });
-}
-
-function toggle3DCardCodeModal() {
-  const modal = document.getElementById("modal3DCardCode");
-  if (modal) modal.classList.toggle("hidden");
-}
-
-function switch3DCodeTab(tab) {
-  const isReact = (tab === "react");
-  const reactEl = document.getElementById("code-content-react");
-  const vanillaEl = document.getElementById("code-content-vanilla");
-  const btnReact = document.getElementById("btn-code-react");
-  const btnVanilla = document.getElementById("btn-code-vanilla");
-  if (reactEl) reactEl.classList.toggle("hidden", !isReact);
-  if (vanillaEl) vanillaEl.classList.toggle("hidden", isReact);
-  if (btnReact) btnReact.className = isReact ? "px-3 py-1 rounded bg-govNavy-900 text-white font-semibold" : "px-3 py-1 rounded text-slate-600 hover:text-slate-900 font-semibold";
-  if (btnVanilla) btnVanilla.className = !isReact ? "px-3 py-1 rounded bg-govNavy-900 text-white font-semibold" : "px-3 py-1 rounded text-slate-600 hover:text-slate-900 font-semibold";
-}
-
-function initAceternity3DCards() {
-  const cards = document.querySelectorAll(".aceternity-card-container");
-  cards.forEach(cardContainer => {
-    const cardBody = cardContainer.querySelector(".aceternity-card-body");
-    const items = cardContainer.querySelectorAll("[data-translate-z]");
-    if (!cardBody) return;
-
-    cardContainer.addEventListener("mousemove", (e) => {
-      const rect = cardContainer.getBoundingClientRect();
-      const x = (e.clientX - rect.left - rect.width / 2) / cardSensitivity;
-      const y = (e.clientY - rect.top - rect.height / 2) / cardSensitivity;
-      cardBody.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
-      
-      const debugEl = document.getElementById("card-3d-debug-stats");
-      if (debugEl) {
-        debugEl.innerHTML = `<span class="text-emerald-400 font-mono">rotateY: ${x.toFixed(2)}deg</span> &bull; <span class="text-amber-400 font-mono">rotateX: ${y.toFixed(2)}deg</span> &bull; <span class="text-slate-400 font-mono">mouse: (${Math.round(e.clientX - rect.left)}px, ${Math.round(e.clientY - rect.top)}px)</span>`;
-      }
-    });
-
-    cardContainer.addEventListener("mouseenter", () => {
-      cardBody.style.transition = "transform 0.1s ease-out";
-      items.forEach(el => {
-        const tz = el.getAttribute("data-translate-z") || "0";
-        const tx = el.getAttribute("data-translate-x") || "0";
-        const ty = el.getAttribute("data-translate-y") || "0";
-        el.style.transform = `translateX(${tx}px) translateY(${ty}px) translateZ(${tz}px)`;
-        el.style.transition = "transform 0.2s ease-linear";
-      });
-    });
-
-    cardContainer.addEventListener("mouseleave", () => {
-      cardBody.style.transition = "transform 0.3s ease-out";
-      cardBody.style.transform = "rotateY(0deg) rotateX(0deg)";
-      items.forEach(el => {
-        el.style.transform = "translateX(0px) translateY(0px) translateZ(0px)";
-        el.style.transition = "transform 0.2s ease-linear";
-      });
-      const debugEl = document.getElementById("card-3d-debug-stats");
-      if (debugEl) {
-        debugEl.innerHTML = `<span class="text-slate-500 font-mono">Card idle (rotateY: 0deg, rotateX: 0deg) &bull; Hover over card</span>`;
-      }
-    });
-  });
-}
-
-// Initialize on DOM load
-document.addEventListener("DOMContentLoaded", () => {
-  initAceternity3DCards();
-});
-
-</script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Noto+Sans+Devanagari:wght@400;600;700&amp;display=swap" rel="stylesheet">
@@ -125,107 +27,6 @@ tailwind.config = {
     }
   }
 }
-
-// =========================================================================
-// BACKEND REAL-TIME WIRING: CONNECTING STITCH UI TO DUCKDB ENGINE
-// =========================================================================
-
-// CDC Hot-Swap Trigger
-async function triggerCdcHotSwap() {
-  const btn = document.getElementById("btn-upload-label");
-  const prevText = btn.innerText;
-  btn.innerText = "Syncing DuckDB...";
-  try {
-    const res = await fetch("/v1/cdc/trigger", { method: "POST" });
-    const json = await res.json();
-    alert(`⚡ CDC Hot-Swap Succeeded!\n\nDataset: ${json.dataset_file || "Master Governance"}\nTotal Rows Ingested: ${json.records_ingested || "2,500"}\nIngestion Latency: ${json.latency_ms || "<1.2"} ms\nStatus: ${json.status || "ACTIVE"}`);
-  } catch (err) {
-    alert("⚡ CDC Hot-Swap:\n\nSchema invalidation & atomic hot-swap completed across all nodes.\nStatus: ACTIVE_HOTSWAP");
-  } finally {
-    btn.innerText = prevText;
-  }
-}
-
-// Aceternity 3D Perspective Card Engine
-let cardSensitivity = 25;
-
-function updateCardSensitivity(val) {
-  cardSensitivity = parseFloat(val) || 25;
-}
-
-function updateCardPerspective(val) {
-  document.querySelectorAll(".aceternity-card-container").forEach(c => {
-    c.style.perspective = val;
-  });
-}
-
-function toggle3DCardCodeModal() {
-  const modal = document.getElementById("modal3DCardCode");
-  if (modal) modal.classList.toggle("hidden");
-}
-
-function switch3DCodeTab(tab) {
-  const isReact = (tab === "react");
-  const reactEl = document.getElementById("code-content-react");
-  const vanillaEl = document.getElementById("code-content-vanilla");
-  const btnReact = document.getElementById("btn-code-react");
-  const btnVanilla = document.getElementById("btn-code-vanilla");
-  if (reactEl) reactEl.classList.toggle("hidden", !isReact);
-  if (vanillaEl) vanillaEl.classList.toggle("hidden", isReact);
-  if (btnReact) btnReact.className = isReact ? "px-3 py-1 rounded bg-govNavy-900 text-white font-semibold" : "px-3 py-1 rounded text-slate-600 hover:text-slate-900 font-semibold";
-  if (btnVanilla) btnVanilla.className = !isReact ? "px-3 py-1 rounded bg-govNavy-900 text-white font-semibold" : "px-3 py-1 rounded text-slate-600 hover:text-slate-900 font-semibold";
-}
-
-function initAceternity3DCards() {
-  const cards = document.querySelectorAll(".aceternity-card-container");
-  cards.forEach(cardContainer => {
-    const cardBody = cardContainer.querySelector(".aceternity-card-body");
-    const items = cardContainer.querySelectorAll("[data-translate-z]");
-    if (!cardBody) return;
-
-    cardContainer.addEventListener("mousemove", (e) => {
-      const rect = cardContainer.getBoundingClientRect();
-      const x = (e.clientX - rect.left - rect.width / 2) / cardSensitivity;
-      const y = (e.clientY - rect.top - rect.height / 2) / cardSensitivity;
-      cardBody.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
-      
-      const debugEl = document.getElementById("card-3d-debug-stats");
-      if (debugEl) {
-        debugEl.innerHTML = `<span class="text-emerald-400 font-mono">rotateY: ${x.toFixed(2)}deg</span> &bull; <span class="text-amber-400 font-mono">rotateX: ${y.toFixed(2)}deg</span> &bull; <span class="text-slate-400 font-mono">mouse: (${Math.round(e.clientX - rect.left)}px, ${Math.round(e.clientY - rect.top)}px)</span>`;
-      }
-    });
-
-    cardContainer.addEventListener("mouseenter", () => {
-      cardBody.style.transition = "transform 0.1s ease-out";
-      items.forEach(el => {
-        const tz = el.getAttribute("data-translate-z") || "0";
-        const tx = el.getAttribute("data-translate-x") || "0";
-        const ty = el.getAttribute("data-translate-y") || "0";
-        el.style.transform = `translateX(${tx}px) translateY(${ty}px) translateZ(${tz}px)`;
-        el.style.transition = "transform 0.2s ease-linear";
-      });
-    });
-
-    cardContainer.addEventListener("mouseleave", () => {
-      cardBody.style.transition = "transform 0.3s ease-out";
-      cardBody.style.transform = "rotateY(0deg) rotateX(0deg)";
-      items.forEach(el => {
-        el.style.transform = "translateX(0px) translateY(0px) translateZ(0px)";
-        el.style.transition = "transform 0.2s ease-linear";
-      });
-      const debugEl = document.getElementById("card-3d-debug-stats");
-      if (debugEl) {
-        debugEl.innerHTML = `<span class="text-slate-500 font-mono">Card idle (rotateY: 0deg, rotateX: 0deg) &bull; Hover over card</span>`;
-      }
-    });
-  });
-}
-
-// Initialize on DOM load
-document.addEventListener("DOMContentLoaded", () => {
-  initAceternity3DCards();
-});
-
 </script>
 <style>
 html { font-size: 16px; transition: font-size 0.15s ease; }
@@ -949,7 +750,7 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; background-colo
   </div>
 
 
-<!-- TAB 5: Aceternity 3D Perspective Card UI -->
+  <!-- TAB 5: Aceternity 3D Perspective Card UI -->
   <div id="tab-pane-3dcard" class="tab-content hidden space-y-6">
     <!-- Showcase Header -->
     <div class="bg-gradient-to-r from-govNavy-900 via-govNavy-800 to-govNavy-950 rounded-xl p-6 text-white border border-slate-700 shadow-xl relative overflow-hidden">
@@ -1983,7 +1784,7 @@ async function triggerCdcHotSwap() {
   try {
     const res = await fetch("/v1/cdc/trigger", { method: "POST" });
     const json = await res.json();
-    alert(`⚡ CDC Hot-Swap Succeeded!\n\nDataset: ${json.dataset_file || "Master Governance"}\nTotal Rows Ingested: ${json.records_ingested || "2,500"}\nIngestion Latency: ${json.latency_ms || "<1.2"} ms\nStatus: ${json.status || "ACTIVE"}`);
+    alert("⚡ CDC Hot-Swap Succeeded!\n\nDataset: " + (json.dataset_file || "Master Governance") + "\nTotal Rows Ingested: " + (json.records_ingested || "2,500") + "\nIngestion Latency: " + (json.latency_ms || "<1.2") + " ms\nStatus: " + (json.status || "ACTIVE"));
   } catch (err) {
     alert("⚡ CDC Hot-Swap:\n\nSchema invalidation & atomic hot-swap completed across all nodes.\nStatus: ACTIVE_HOTSWAP");
   } finally {
@@ -2032,11 +1833,11 @@ function initAceternity3DCards() {
       const rect = cardContainer.getBoundingClientRect();
       const x = (e.clientX - rect.left - rect.width / 2) / cardSensitivity;
       const y = (e.clientY - rect.top - rect.height / 2) / cardSensitivity;
-      cardBody.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+      cardBody.style.transform = "rotateY(" + x + "deg) rotateX(" + y + "deg)";
       
       const debugEl = document.getElementById("card-3d-debug-stats");
       if (debugEl) {
-        debugEl.innerHTML = `<span class="text-emerald-400 font-mono">rotateY: ${x.toFixed(2)}deg</span> &bull; <span class="text-amber-400 font-mono">rotateX: ${y.toFixed(2)}deg</span> &bull; <span class="text-slate-400 font-mono">mouse: (${Math.round(e.clientX - rect.left)}px, ${Math.round(e.clientY - rect.top)}px)</span>`;
+        debugEl.innerHTML = '<span class="text-emerald-400 font-mono">rotateY: ' + x.toFixed(2) + 'deg</span> &bull; <span class="text-amber-400 font-mono">rotateX: ' + y.toFixed(2) + 'deg</span> &bull; <span class="text-slate-400 font-mono">mouse: (' + Math.round(e.clientX - rect.left) + 'px, ' + Math.round(e.clientY - rect.top) + 'px)</span>';
       }
     });
 
@@ -2046,7 +1847,7 @@ function initAceternity3DCards() {
         const tz = el.getAttribute("data-translate-z") || "0";
         const tx = el.getAttribute("data-translate-x") || "0";
         const ty = el.getAttribute("data-translate-y") || "0";
-        el.style.transform = `translateX(${tx}px) translateY(${ty}px) translateZ(${tz}px)`;
+        el.style.transform = "translateX(" + tx + "px) translateY(" + ty + "px) translateZ(" + tz + "px)";
         el.style.transition = "transform 0.2s ease-linear";
       });
     });
@@ -2060,7 +1861,7 @@ function initAceternity3DCards() {
       });
       const debugEl = document.getElementById("card-3d-debug-stats");
       if (debugEl) {
-        debugEl.innerHTML = `<span class="text-slate-500 font-mono">Card idle (rotateY: 0deg, rotateX: 0deg) &bull; Hover over card</span>`;
+        debugEl.innerHTML = '<span class="text-slate-500 font-mono">Card idle (rotateY: 0deg, rotateX: 0deg) &bull; Hover over card</span>';
       }
     });
   });
