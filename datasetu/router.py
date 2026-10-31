@@ -477,9 +477,73 @@ def build_app(store: DatasetStore, source_info: Optional[Dict[str, Any]] = None)
             "previous_version": prev_version,
             "active_version": new_version,
             "swap_latency_ms": swap_ms,
+            "latency_ms": swap_ms,
+            "records_ingested": store.conn.execute(f"SELECT COUNT(*) FROM {store.table_name}").fetchone()[0],
+            "dataset_file": "Master Governance",
             "zero_downtime": True,
             "message": "Atomic in-memory table swap completed with zero downtime.",
         }
+
+    # 10b. Real-time File Upload & Compilation Hot-Swap
+    @app.post(
+        "/v1/upload",
+        tags=["System"],
+        summary="Upload a new CSV/XLSX file and execute zero-downtime atomic hot-swap into DuckDB",
+    )
+    async def upload_dataset_file(request: Request, filename: Optional[str] = Query(None)):
+        import tempfile
+        from datasetu.sniffer import sniff
+        from datasetu.normalizer import normalize
+
+        body_bytes = await request.body()
+        if not body_bytes:
+            raise HTTPException(status_code=400, detail="Uploaded file body cannot be empty.")
+
+        fname = filename or "uploaded_dataset.csv"
+        suffix = f".{fname.split('.')[-1]}" if "." in fname else ".csv"
+
+        with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
+            tmp.write(body_bytes)
+            tmp_path = Path(tmp.name)
+
+        t0 = time.perf_counter()
+        try:
+            sniff_res = sniff(tmp_path)
+            norm_tbl, report = normalize(
+                table=sniff_res.table,
+                encoding=sniff_res.encoding,
+                header_row_index=sniff_res.header_row_index,
+                preamble_rows_stripped=sniff_res.preamble_rows_stripped,
+            )
+            prev_version = store.version
+            new_version = store.swap(norm_tbl, new_report=report)
+            latency_ms = round((time.perf_counter() - t0) * 1000.0, 2)
+
+            d_stats = report.district_stats
+            matched = d_stats.matched_exact + d_stats.matched_alias + d_stats.matched_fuzzy
+            total_dists = max(1, d_stats.total_districts or len(norm_tbl))
+            lgd_pct = round((matched / total_dists) * 100.0, 1)
+
+            return {
+                "status": "cdc_sync_completed",
+                "filename": fname,
+                "dataset_file": fname,
+                "previous_version": prev_version,
+                "active_version": new_version,
+                "records_ingested": len(norm_tbl),
+                "columns_detected": len(norm_tbl.column_names),
+                "lgd_resolved": matched,
+                "lgd_total": total_dists,
+                "lgd_percentage": f"{lgd_pct}%",
+                "latency_ms": latency_ms,
+                "zero_downtime": True,
+                "message": f"Successfully compiled {len(norm_tbl)} records into DuckDB with atomic hot-swap.",
+            }
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Dataset compilation error: {str(e)}")
+        finally:
+            if tmp_path.exists():
+                tmp_path.unlink()
 
     # 11. CDC Status & Sync Health
     @app.get(
