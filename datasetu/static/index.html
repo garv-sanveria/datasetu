@@ -39,8 +39,66 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; background-colo
 .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-@keyframes pulseSubtle { 0%, 100% { opacity: 1; } 50% { opacity: .6; } }
-.live-pulse { animation: pulseSubtle 2s infinite; }
+
+/* Micro-Animations & Transitions */
+@keyframes tabFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tab-content:not(.hidden) {
+  animation: tabFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes rowSlideIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#explorerTableBody tr {
+  animation: rowSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+#explorerTableBody tr:hover {
+  background-color: #f8fafc;
+  transform: translateX(2px);
+}
+
+.card-hover-lift {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px -6px rgba(10, 25, 49, 0.1), 0 4px 8px -2px rgba(10, 25, 49, 0.05);
+}
+
+@keyframes pulseSubtle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(1.15); }
+}
+.live-pulse {
+  animation: pulseSubtle 2s infinite ease-in-out;
+}
+
+@keyframes modalZoomIn {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-animate {
+  animation: modalZoomIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+button {
+  transition: transform 0.1s ease, filter 0.15s ease;
+}
+button:active {
+  transform: scale(0.97);
+}
+
+.btn-pill-glow:hover {
+  box-shadow: 0 0 12px rgba(255, 153, 51, 0.35);
+}
 </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-saffron selection:text-white">
@@ -104,9 +162,8 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; background-colo
         <button class="nav-btn px-3 py-2 text-slate-300 hover:text-white hover:bg-govNavy-800 rounded-md transition-colors" onclick="navToTab('disinfector', this)">Data Disinfector</button>
         <button class="nav-btn px-3 py-2 text-slate-300 hover:text-white hover:bg-govNavy-800 rounded-md transition-colors" onclick="navToTab('playground', this)">Bharat API Playground</button>
         <button class="nav-btn px-3 py-2 text-slate-300 hover:text-white hover:bg-govNavy-800 rounded-md transition-colors" onclick="navToTab('lgd', this)">LGD Directory</button>
-        <button class="nav-btn px-3 py-2 text-slate-300 hover:text-white hover:bg-govNavy-800 rounded-md transition-colors flex items-center gap-1.5" onclick="navToTab('3dcard', this)">
-          <span class="w-2 h-2 rounded-full bg-saffron animate-pulse"></span>
-          <span>✨ 3D Cards</span>
+        <button class="nav-btn px-3 py-2 text-slate-300 hover:text-white hover:bg-govNavy-800 rounded-md transition-colors flex items-center gap-1.5" onclick="openDocsModal()">
+          <span>📜 GIGW 3.0 Specs</span>
         </button>
         <button class="nav-btn px-3 py-2 text-slate-300 hover:text-white hover:bg-govNavy-800 rounded-md transition-colors" onclick="openDocsModal()">Documentation</button>
       </div>
@@ -194,7 +251,7 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; background-colo
       <button class="bg-slate-900/60 hover:bg-slate-800 border border-slate-700/80 px-2.5 py-1 rounded text-slate-200 transition" onclick="applyTrendingFilter('Varanasi')">District Development LGD</button>
       <button class="bg-slate-900/60 hover:bg-slate-800 border border-slate-700/80 px-2.5 py-1 rounded text-slate-200 transition" onclick="applyTrendingFilter('Karnataka')">Karnataka LGD Entity</button>
       <button class="bg-slate-900/60 hover:bg-slate-800 border border-slate-700/80 px-2.5 py-1 rounded text-slate-200 transition" onclick="applyTrendingFilter('PMAY')">Union Budget Expenditure</button>
-      <button class="bg-saffron/20 hover:bg-saffron/30 border border-saffron/50 px-2.5 py-1 rounded text-amber-300 font-semibold transition flex items-center gap-1" onclick="switchGovTab('3dcard')">✨ Aceternity 3D Card Live</button>
+      <button class="bg-saffron/20 hover:bg-saffron/30 border border-saffron/50 px-2.5 py-1 rounded text-amber-300 font-semibold transition flex items-center gap-1 btn-pill-glow" onclick="switchGovTab('explorer'); loadExplorerData(1);">🔍 In-Memory 2,500 Records</button>
     </div>
 
     <!-- Interactive cURL CLI Bar with Run Query Toggle -->
@@ -264,7 +321,7 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; background-colo
 <!-- Clickable KPI Banner with Interactive Routing -->
 <section class="max-w-7xl mx-auto -mt-6 px-4 sm:px-8 relative z-20 w-full">
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-    <div class="bg-white rounded-lg p-4 shadow-md border-t-4 border-govNavy-900 border-x border-b border-slate-200 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition group" onclick="switchGovTab('explorer'); resetExplorerFilters();" title="Click to view all 2,500 ingested datasets">
+    <div class="bg-white rounded-lg p-4 shadow-md border-t-4 border-govNavy-900 border-x border-b border-slate-200 cursor-pointer card-hover-lift group" onclick="switchGovTab('explorer'); resetExplorerFilters();" title="Click to view all 2,500 ingested datasets">
       <div class="flex items-center justify-between">
         <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide group-hover:text-govNavy-900">Core Datasets Ingested</span>
         <span class="bg-blue-50 text-govNavy-900 text-[10px] font-bold px-1.5 py-0.5 rounded">All-India</span>
@@ -275,7 +332,7 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; background-colo
       </p>
     </div>
 
-    <div class="bg-white rounded-lg p-4 shadow-md border-t-4 border-saffron border-x border-b border-slate-200 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition group" onclick="switchGovTab('lgd')" title="Click to explore LGD Directory Crosswalk">
+    <div class="bg-white rounded-lg p-4 shadow-md border-t-4 border-saffron border-x border-b border-slate-200 cursor-pointer card-hover-lift group" onclick="switchGovTab('lgd')" title="Click to explore LGD Directory Crosswalk">
       <div class="flex items-center justify-between">
         <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide group-hover:text-amber-800">LGD Match Accuracy</span>
         <span class="bg-amber-50 text-amber-800 text-[10px] font-bold px-1.5 py-0.5 rounded">MoPR Verified</span>
@@ -286,7 +343,7 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; background-colo
       </p>
     </div>
 
-    <div class="bg-white rounded-lg p-4 shadow-md border-t-4 border-indiaGreen border-x border-b border-slate-200 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition group" onclick="switchGovTab('disinfector')" title="Click to view Script Normalization Diff">
+    <div class="bg-white rounded-lg p-4 shadow-md border-t-4 border-indiaGreen border-x border-b border-slate-200 cursor-pointer card-hover-lift group" onclick="switchGovTab('disinfector')" title="Click to view Script Normalization Diff">
       <div class="flex items-center justify-between">
         <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide group-hover:text-indiaGreen">Disinfection Scorecard</span>
         <span class="bg-emerald-50 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded">Grade A+</span>
@@ -297,7 +354,7 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; background-colo
       </p>
     </div>
 
-    <div class="bg-white rounded-lg p-4 shadow-md border-t-4 border-govRed border-x border-b border-slate-200 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition group" onclick="switchGovTab('playground'); executePlaygroundQuery();" title="Click to test live query latency">
+    <div class="bg-white rounded-lg p-4 shadow-md border-t-4 border-govRed border-x border-b border-slate-200 cursor-pointer card-hover-lift group" onclick="switchGovTab('playground'); executePlaygroundQuery();" title="Click to test live query latency">
       <div class="flex items-center justify-between">
         <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide group-hover:text-govRed">Query Latency (DuckDB)</span>
         <span class="bg-red-50 text-govRed font-bold text-[10px] px-1.5 py-0.5 rounded">Vectorized</span>
@@ -327,10 +384,7 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; background-colo
       <button id="tab-btn-disinfector" class="tab-trigger px-3.5 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-govNavy-900 whitespace-nowrap" onclick="switchGovTab('disinfector')">Data Disinfector (Before / After)</button>
       <button id="tab-btn-playground" class="tab-trigger px-3.5 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-govNavy-900 whitespace-nowrap" onclick="switchGovTab('playground')">Bharat API Playground</button>
       <button id="tab-btn-lgd" class="tab-trigger px-3.5 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-govNavy-900 whitespace-nowrap" onclick="switchGovTab('lgd')">LGD Directory Crosswalk</button>
-      <button id="tab-btn-3dcard" class="tab-trigger px-3.5 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-govNavy-900 whitespace-nowrap flex items-center gap-1.5" onclick="switchGovTab('3dcard')">
-        <span class="w-1.5 h-1.5 rounded-full bg-saffron animate-pulse"></span>
-        <span>✨ Aceternity 3D Card</span>
-      </button>
+      <button class="bg-saffron/20 hover:bg-saffron/30 border border-saffron/50 px-2.5 py-1 rounded text-amber-300 font-semibold transition flex items-center gap-1 btn-pill-glow" onclick="switchGovTab('explorer'); loadExplorerData(1);">🔍 In-Memory 2,500 Records</button>
     </div>
   </div>
 
@@ -667,261 +721,7 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; background-colo
       </div>
     </div>
   </div>
-
-
-  <!-- TAB 5: Aceternity 3D Perspective Card UI -->
-  <div id="tab-pane-3dcard" class="tab-content hidden space-y-6">
-    <!-- Showcase Header -->
-    <div class="bg-gradient-to-r from-govNavy-900 via-govNavy-800 to-govNavy-950 rounded-xl p-6 text-white border border-slate-700 shadow-xl relative overflow-hidden">
-      <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-saffron/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
-        <div>
-          <div class="flex items-center space-x-2 text-xs font-bold text-saffron uppercase tracking-widest mb-1.5">
-            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            <span>Aceternity UI Component Integration</span>
-            <span class="text-slate-500">•</span>
-            <span class="text-slate-300">CSS Perspective Kinematics</span>
-          </div>
-          <h3 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-            <span>✨ 3D Floating Perspective Cards</span>
-            <span class="text-xs bg-slate-800 border border-slate-600 text-slate-300 px-2 py-0.5 rounded font-mono">Aceternity UI</span>
-          </h3>
-          <p class="text-xs text-slate-300 mt-1.5 max-w-2xl leading-relaxed">
-            Move your cursor across each card to experience hardware-accelerated CSS perspective tilt (<code class="text-amber-300 font-mono">rotateX</code> / <code class="text-amber-300 font-mono">rotateY</code>) and floating multi-layer Z-translations (<code class="text-emerald-300 font-mono">translateZ="50|60|100|20"</code>).
-          </p>
-        </div>
-        
-        <!-- Live Kinematics Telemetry Pill -->
-        <div class="bg-slate-900/90 border border-slate-700 px-4 py-2.5 rounded-lg flex flex-col justify-center shrink-0 min-w-[260px]">
-          <div class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1 flex items-center justify-between">
-            <span>Live Physics Telemetry</span>
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          </div>
-          <div id="card-3d-debug-stats" class="text-xs font-mono text-slate-300">
-            <span class="text-slate-500">Card idle (rotateY: 0°, rotateX: 0°) • Hover over card</span>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Interactive Tuning Controls Bar -->
-      <div class="mt-4 pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
-        <div class="flex items-center gap-4">
-          <div class="flex items-center space-x-2">
-            <span class="text-slate-400">Perspective Depth:</span>
-            <select id="select-perspective" class="bg-slate-800 border border-slate-700 rounded text-xs text-white py-1 px-2.5 focus:ring-1 focus:ring-saffron" onchange="updateCardPerspective(this.value)">
-              <option value="1000px" selected>1000px (Default Aceternity)</option>
-              <option value="600px">600px (High Parallax / Dramatic)</option>
-              <option value="1500px">1500px (Subtle Depth)</option>
-              <option value="2500px">2500px (Ultra Flat)</option>
-            </select>
-          </div>
-          <div class="flex items-center space-x-2">
-            <span class="text-slate-400">Tilt Sensitivity:</span>
-            <select id="select-sensitivity" class="bg-slate-800 border border-slate-700 rounded text-xs text-white py-1 px-2.5 focus:ring-1 focus:ring-saffron" onchange="updateCardSensitivity(this.value)">
-              <option value="25" selected>Standard (x/25)</option>
-              <option value="15">High Responsive (x/15)</option>
-              <option value="40">Smooth Subtle (x/40)</option>
-            </select>
-          </div>
-        </div>
-        <div class="flex items-center space-x-2">
-          <button class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs transition flex items-center gap-1.5" onclick="toggle3DCardCodeModal()">
-            <span class="text-saffron font-mono">&lt;/&gt;</span>
-            <span>View React &amp; CSS Source</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Cards Grid -->
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 items-stretch">
-      <!-- CARD 1: Exact Aceternity UI 3D Card (Prompt Source) -->
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex flex-col justify-between">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-2">
-          <div class="flex items-center space-x-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-            <h4 class="font-bold text-sm text-slate-800">Aceternity UI Reference Implementation</h4>
-          </div>
-          <span class="text-[11px] font-mono bg-slate-100 text-slate-600 px-2 py-0.5 rounded">components/3d-card-demo.tsx</span>
-        </div>
-        <p class="text-xs text-slate-500 mb-4">
-          Pixel-perfect reproduction of Aceternity's 3D Card Demo with Unsplash nature thumbnail and hover translation layers.
-        </p>
-
-        <!-- The 3D Card Container -->
-        <div class="aceternity-card-container py-8 flex items-center justify-center inter-var w-full" style="perspective: 1000px;">
-          <div class="aceternity-card-body bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full max-w-[28rem] h-auto rounded-xl p-6 border transition-all duration-200 ease-linear shadow-lg" style="transform-style: preserve-3d;">
-            <div class="w-full" style="transform-style: preserve-3d;">
-              <div data-translate-z="50" class="w-fit text-xl font-bold text-neutral-600 dark:text-white transition duration-200 ease-linear" style="transform-style: preserve-3d;">
-                Make things float in air
-              </div>
-              <p data-translate-z="60" class="w-fit text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300 transition duration-200 ease-linear" style="transform-style: preserve-3d;">
-                Hover over this card to unleash the power of CSS perspective
-              </p>
-              <div data-translate-z="100" class="w-full mt-4 transition duration-200 ease-linear" style="transform-style: preserve-3d;">
-                <img
-                  src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                  height="1000"
-                  width="1000"
-                  class="h-60 w-full object-cover rounded-xl group-hover/card:shadow-xl shadow-md"
-                  alt="thumbnail"
-                />
-              </div>
-              <div class="flex justify-between items-center mt-20" style="transform-style: preserve-3d;">
-                <a
-                  data-translate-z="20"
-                  href="https://twitter.com/mannupaaji"
-                  target="_blank"
-                  class="w-fit px-4 py-2 rounded-xl text-xs font-normal dark:text-white text-neutral-700 hover:text-black transition duration-200 ease-linear"
-                  style="transform-style: preserve-3d;"
-                >
-                  Try now →
-                </a>
-                <button
-                  data-translate-z="20"
-                  class="w-fit px-4 py-2 rounded-xl bg-black dark:bg-white dark:text-black text-white text-xs font-bold transition duration-200 ease-linear hover:bg-neutral-800"
-                  style="transform-style: preserve-3d;"
-                >
-                  Sign up
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-mono">
-          <span>Layers: Z-50 (Title), Z-60 (Desc), Z-100 (Img), Z-20 (Actions)</span>
-          <span class="text-emerald-600 font-semibold">100% Match</span>
-        </div>
-      </div>
-
-      <!-- CARD 2: DataSetu Bharat Governance Edition (GovTech 3D Card) -->
-      <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex flex-col justify-between">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-2">
-          <div class="flex items-center space-x-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-saffron"></span>
-            <h4 class="font-bold text-sm text-slate-800">DataSetu Bharat Governance Edition</h4>
-          </div>
-          <span class="text-[11px] font-mono bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded">GIGW 3.0 DPI Edition</span>
-        </div>
-        <p class="text-xs text-slate-500 mb-4">
-          Integrated with DataSetu's live DuckDB columnar telemetry, LGD geospatial codes, and real-time CDC sync pipeline.
-        </p>
-
-        <!-- The 3D Card Container -->
-        <div class="aceternity-card-container py-8 flex items-center justify-center inter-var w-full" style="perspective: 1000px;">
-          <div class="aceternity-card-body flex items-center justify-center relative transition-all duration-200 ease-linear bg-gradient-to-br from-[#0A1931] via-[#0c1e3d] to-[#060f1e] text-white border border-slate-700/80 hover:border-saffron/70 group/card shadow-2xl hover:shadow-saffron/20 w-full max-w-[28rem] h-auto rounded-xl p-6" style="transform-style: preserve-3d;">
-            <div class="w-full" style="transform-style: preserve-3d;">
-              <!-- Header Badges (Z=50) -->
-              <div data-translate-z="50" class="w-full flex items-center justify-between transition duration-200 ease-linear" style="transform-style: preserve-3d;">
-                <div class="flex items-center space-x-2">
-                  <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-saffron text-govNavy-950 uppercase tracking-wider">MoPR LGD Verified</span>
-                  <span class="text-[11px] text-slate-400 font-devanagari">डेटासेतु</span>
-                </div>
-                <div class="flex items-center space-x-1.5 text-xs text-emerald-400 font-mono">
-                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                  <span>&lt;1.18 ms</span>
-                </div>
-              </div>
-
-              <!-- Title & Description (Z=60) -->
-              <div data-translate-z="60" class="w-fit mt-3 transition duration-200 ease-linear" style="transform-style: preserve-3d;">
-                <h3 class="text-xl font-extrabold text-white tracking-tight flex items-center gap-2">
-                  <span>🇮🇳 National Open Data Engine</span>
-                </h3>
-                <p class="text-slate-300 text-xs mt-1.5 leading-relaxed">
-                  Dual-engine columnar pipeline floating in 3D perspective with zero-copy DuckDB cache and instant geospatial entity resolution.
-                </p>
-              </div>
-
-              <!-- Live Telemetry Card (Z=100) -->
-              <div data-translate-z="100" class="w-full mt-4 bg-slate-900/95 rounded-xl p-3.5 border border-slate-700/80 shadow-2xl transition duration-200 ease-linear" style="transform-style: preserve-3d;">
-                <div class="flex items-center justify-between pb-2 border-b border-slate-800 text-[11px] text-slate-300 font-mono">
-                  <span class="truncate">GET /v1/data?state=Karnataka</span>
-                  <span class="text-emerald-400 font-bold ml-2">200 OK</span>
-                </div>
-                <div class="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
-                  <div class="bg-govNavy-800/90 p-2 rounded border border-slate-700/70">
-                    <div class="text-[10px] text-slate-400 uppercase font-semibold">Records</div>
-                    <div class="font-bold text-amber-400 font-mono text-sm mt-0.5">2,500</div>
-                  </div>
-                  <div class="bg-govNavy-800/90 p-2 rounded border border-slate-700/70">
-                    <div class="text-[10px] text-slate-400 uppercase font-semibold">Hygiene</div>
-                    <div class="font-bold text-emerald-400 font-mono text-sm mt-0.5">98.8%</div>
-                  </div>
-                  <div class="bg-govNavy-800/90 p-2 rounded border border-slate-700/70">
-                    <div class="text-[10px] text-slate-400 uppercase font-semibold">LGD Match</div>
-                    <div class="font-bold text-sky-400 font-mono text-sm mt-0.5">91.9%</div>
-                  </div>
-                </div>
-                <div class="mt-2.5 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400 font-mono">
-                  <span>DuckDB + Arrow Columnar</span>
-                  <span class="text-saffron font-semibold">SHA-256 Verified</span>
-                </div>
-              </div>
-
-              <!-- Actions (Z=20) -->
-              <div class="flex justify-between items-center mt-6" style="transform-style: preserve-3d;">
-                <button
-                  data-translate-z="20"
-                  onclick="switchGovTab('playground')"
-                  class="w-fit px-4 py-2 rounded-xl text-xs font-semibold bg-saffron hover:bg-amber-400 text-govNavy-950 transition duration-200 ease-linear shadow-md active:scale-95"
-                  style="transform-style: preserve-3d;"
-                >
-                  Bharat API Playground →
-                </button>
-                <button
-                  data-translate-z="20"
-                  onclick="window.open('/v1/data?format=parquet')"
-                  class="w-fit px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold border border-slate-600 transition duration-200 ease-linear active:scale-95"
-                  style="transform-style: preserve-3d;"
-                >
-                  ⚡ Download Parquet
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-mono">
-          <span>Integrated with live backend at http://127.0.0.1:8000</span>
-          <span class="text-saffron font-semibold">Real-Time Data</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Mathematical Kinematics & Architectural Reference Callout -->
-    <div class="bg-slate-50 rounded-xl border border-slate-200 p-5 text-xs text-slate-700 space-y-3">
-      <div class="flex items-center justify-between">
-        <h5 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-          <span>📐 Under The Hood: How CSS 3D Perspective &amp; translateZ Work</span>
-        </h5>
-        <span class="text-[11px] bg-slate-200 px-2 py-0.5 rounded font-mono text-slate-700">W3C CSS 3D Transforms</span>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-        <div class="bg-white p-3 rounded-lg border border-slate-200">
-          <div class="font-bold text-govNavy-900 mb-1">1. Container Perspective</div>
-          <p class="text-slate-600 leading-relaxed">
-            The container establishes a 3D space with <code class="bg-slate-100 px-1 rounded text-govNavy-900">perspective: 1000px</code>, defining the virtual distance between the viewer's eye and the z=0 plane.
-          </p>
-        </div>
-        <div class="bg-white p-3 rounded-lg border border-slate-200">
-          <div class="font-bold text-govNavy-900 mb-1">2. Dynamic Angular Tilt</div>
-          <p class="text-slate-600 leading-relaxed">
-            Mouse coordinates calculate relative delta from card center:
-            <code class="block bg-slate-100 p-1 mt-1 rounded text-[11px] font-mono text-govNavy-900">rotateY = (clientX - cx) / 25<br>rotateX = (clientY - cy) / 25</code>
-          </p>
-        </div>
-        <div class="bg-white p-3 rounded-lg border border-slate-200">
-          <div class="font-bold text-govNavy-900 mb-1">3. Preserve-3D &amp; translateZ</div>
-          <p class="text-slate-600 leading-relaxed">
-            With <code class="bg-slate-100 px-1 rounded text-govNavy-900">transform-style: preserve-3d</code>, child elements elevate on the Z-axis (20px, 50px, 60px, 100px), floating above the card surface as it tilts!
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</main>
+  </main>
 
 <!-- Institutional Partners Ecosystem -->
 <section class="bg-slate-100 border-t border-b border-slate-200 py-8 px-4 sm:px-8">
@@ -1112,7 +912,7 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; background-colo
 
 <!-- MODAL 3: Instant LGD Quick Lookup Modal -->
 <div id="modalLgdLookup" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-  <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200">
+  <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full modal-animate overflow-hidden border border-slate-200">
     <div class="bg-govNavy-900 text-white px-5 py-3.5 flex items-center justify-between">
       <h3 class="font-bold text-sm tracking-wide">Instant LGD Master Resolver</h3>
       <button class="text-slate-400 hover:text-white" onclick="closeLgdLookupModal()">✕</button>
@@ -1154,82 +954,6 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; background-colo
     </div>
     <div class="bg-slate-50 px-5 py-3 border-t border-slate-200 flex justify-end">
       <button class="text-xs bg-govNavy-900 text-white px-3 py-1.5 rounded font-medium" onclick="closeDocsModal()">Got it</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL 5: 3D Card Component Source Code -->
-<div id="modal3DCardCode" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-  <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[85vh] flex flex-col overflow-hidden border border-slate-200">
-    <div class="bg-govNavy-900 text-white px-5 py-3.5 flex items-center justify-between">
-      <div class="flex items-center space-x-2">
-        <span class="bg-saffron text-govNavy-950 font-bold text-[10px] px-2 py-0.5 rounded font-mono">&lt;/&gt;</span>
-        <h3 class="font-bold text-sm tracking-wide">Aceternity UI 3D Card &mdash; Implementation Code</h3>
-      </div>
-      <button class="text-slate-400 hover:text-white text-lg font-bold" onclick="toggle3DCardCodeModal()">&times;</button>
-    </div>
-    <div class="p-3 bg-slate-100 border-b border-slate-200 flex items-center space-x-2 text-xs">
-      <button id="btn-code-react" class="px-3 py-1 rounded bg-govNavy-900 text-white font-semibold" onclick="switch3DCodeTab('react')">React / Next.js (@/components/ui/3d-card.tsx)</button>
-      <button id="btn-code-vanilla" class="px-3 py-1 rounded text-slate-600 hover:text-slate-900 font-semibold" onclick="switch3DCodeTab('vanilla')">Vanilla JS / Tailwind CSS</button>
-    </div>
-    <div class="p-4 overflow-y-auto custom-scrollbar bg-slate-950 font-mono text-xs text-slate-200 flex-grow">
-      <pre id="code-content-react" class="block leading-relaxed">// components/ui/3d-card.tsx (Aceternity UI React Reference)
-"use client";
-
-import { cn } from "@/lib/utils";
-import React, { createContext, useState, useContext, useRef, useEffect } from "react";
-
-const MouseEnterContext = createContext&lt;[boolean, React.Dispatch&lt;React.SetStateAction&lt;boolean&gt;&gt;] | undefined&gt;(undefined);
-
-export const CardContainer = ({ children, className, containerClassName }: { children?: React.ReactNode; className?: string; containerClassName?: string }) =&gt; {
-  const containerRef = useRef&lt;HTMLDivElement&gt;(null);
-  const [isMouseEntered, setIsMouseEntered] = useState(false);
-
-  const handleMouseMove = (e: React.MouseEvent&lt;HTMLDivElement&gt;) =&gt; {
-    if (!containerRef.current) return;
-    const { left, top, width, height } = containerRef.current.getBoundingClientRect();
-    const x = (e.clientX - left - width / 2) / 25;
-    const y = (e.clientY - top - height / 2) / 25;
-    containerRef.current.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
-  };
-
-  const handleMouseEnter = () =&gt; {
-    setIsMouseEntered(true);
-  };
-
-  const handleMouseLeave = () =&gt; {
-    if (!containerRef.current) return;
-    setIsMouseEntered(false);
-    containerRef.current.style.transform = `rotateY(0deg) rotateX(0deg)`;
-  };
-
-  return (
-    &lt;MouseEnterContext.Provider value={[isMouseEntered, setIsMouseEntered]}&gt;
-      &lt;div className={cn("py-20 flex items-center justify-center", containerClassName)} style={{ perspective: "1000px" }}&gt;
-        &lt;div ref={containerRef} onMouseEnter={handleMouseEnter} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} className={cn("flex items-center justify-center relative transition-all duration-200 ease-linear", className)} style={{ transformStyle: "preserve-3d" }}&gt;
-          {children}
-        &lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/MouseEnterContext.Provider&gt;
-  );
-};</pre>
-      <pre id="code-content-vanilla" class="hidden leading-relaxed">&lt;!-- Vanilla JS + Tailwind 3D Card Engine --&gt;
-&lt;div class="aceternity-card-container py-10 flex items-center justify-center" style="perspective: 1000px;"&gt;
-  &lt;div class="aceternity-card-body relative transition-all duration-200 ease-linear rounded-xl p-6 border shadow-lg" style="transform-style: preserve-3d;"&gt;
-    &lt;div data-translate-z="50" class="text-xl font-bold transition duration-200"&gt;Make things float in air&lt;/div&gt;
-    &lt;p data-translate-z="60" class="text-sm mt-2 transition duration-200"&gt;Hover over this card to unleash CSS perspective&lt;/p&gt;
-    &lt;div data-translate-z="100" class="mt-4 transition duration-200"&gt;
-      &lt;img src="..." class="rounded-xl shadow-md" /&gt;
-    &lt;/div&gt;
-    &lt;div class="flex justify-between items-center mt-20"&gt;
-      &lt;a data-translate-z="20" class="text-xs transition duration-200"&gt;Try now &rarr;&lt;/a&gt;
-      &lt;button data-translate-z="20" class="px-4 py-2 bg-black text-white text-xs font-bold rounded-xl"&gt;Sign up&lt;/button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;</pre>
-    </div>
-    <div class="p-3 bg-slate-100 border-t border-slate-200 flex justify-end">
-      <button class="bg-govNavy-900 text-white text-xs font-semibold px-4 py-1.5 rounded hover:bg-govNavy-800" onclick="toggle3DCardCodeModal()">Close</button>
     </div>
   </div>
 </div>
@@ -1711,86 +1435,11 @@ async function triggerCdcHotSwap() {
   }
 }
 
-// Aceternity 3D Perspective Card Engine
-let cardSensitivity = 25;
-
-function updateCardSensitivity(val) {
-  cardSensitivity = parseFloat(val) || 25;
-}
-
-function updateCardPerspective(val) {
-  document.querySelectorAll(".aceternity-card-container").forEach(c => {
-    c.style.perspective = val;
-  });
-}
-
-function toggle3DCardCodeModal() {
-  const modal = document.getElementById("modal3DCardCode");
-  if (modal) modal.classList.toggle("hidden");
-}
-
-function switch3DCodeTab(tab) {
-  const isReact = (tab === "react");
-  const reactEl = document.getElementById("code-content-react");
-  const vanillaEl = document.getElementById("code-content-vanilla");
-  const btnReact = document.getElementById("btn-code-react");
-  const btnVanilla = document.getElementById("btn-code-vanilla");
-  if (reactEl) reactEl.classList.toggle("hidden", !isReact);
-  if (vanillaEl) vanillaEl.classList.toggle("hidden", isReact);
-  if (btnReact) btnReact.className = isReact ? "px-3 py-1 rounded bg-govNavy-900 text-white font-semibold" : "px-3 py-1 rounded text-slate-600 hover:text-slate-900 font-semibold";
-  if (btnVanilla) btnVanilla.className = !isReact ? "px-3 py-1 rounded bg-govNavy-900 text-white font-semibold" : "px-3 py-1 rounded text-slate-600 hover:text-slate-900 font-semibold";
-}
-
-function initAceternity3DCards() {
-  const cards = document.querySelectorAll(".aceternity-card-container");
-  cards.forEach(cardContainer => {
-    const cardBody = cardContainer.querySelector(".aceternity-card-body");
-    const items = cardContainer.querySelectorAll("[data-translate-z]");
-    if (!cardBody) return;
-
-    cardContainer.addEventListener("mousemove", (e) => {
-      const rect = cardContainer.getBoundingClientRect();
-      const x = (e.clientX - rect.left - rect.width / 2) / cardSensitivity;
-      const y = (e.clientY - rect.top - rect.height / 2) / cardSensitivity;
-      cardBody.style.transform = "rotateY(" + x + "deg) rotateX(" + y + "deg)";
-      
-      const debugEl = document.getElementById("card-3d-debug-stats");
-      if (debugEl) {
-        debugEl.innerHTML = '<span class="text-emerald-400 font-mono">rotateY: ' + x.toFixed(2) + 'deg</span> &bull; <span class="text-amber-400 font-mono">rotateX: ' + y.toFixed(2) + 'deg</span> &bull; <span class="text-slate-400 font-mono">mouse: (' + Math.round(e.clientX - rect.left) + 'px, ' + Math.round(e.clientY - rect.top) + 'px)</span>';
-      }
-    });
-
-    cardContainer.addEventListener("mouseenter", () => {
-      cardBody.style.transition = "transform 0.1s ease-out";
-      items.forEach(el => {
-        const tz = el.getAttribute("data-translate-z") || "0";
-        const tx = el.getAttribute("data-translate-x") || "0";
-        const ty = el.getAttribute("data-translate-y") || "0";
-        el.style.transform = "translateX(" + tx + "px) translateY(" + ty + "px) translateZ(" + tz + "px)";
-        el.style.transition = "transform 0.2s ease-linear";
-      });
-    });
-
-    cardContainer.addEventListener("mouseleave", () => {
-      cardBody.style.transition = "transform 0.3s ease-out";
-      cardBody.style.transform = "rotateY(0deg) rotateX(0deg)";
-      items.forEach(el => {
-        el.style.transform = "translateX(0px) translateY(0px) translateZ(0px)";
-        el.style.transition = "transform 0.2s ease-linear";
-      });
-      const debugEl = document.getElementById("card-3d-debug-stats");
-      if (debugEl) {
-        debugEl.innerHTML = '<span class="text-slate-500 font-mono">Card idle (rotateY: 0deg, rotateX: 0deg) &bull; Hover over card</span>';
-      }
-    });
-  });
-}
-
 // Initialize on DOM load
 document.addEventListener("DOMContentLoaded", () => {
   loadExplorerData(1);
   loadHygieneStats();
-  initAceternity3DCards();
+  
 });
 
 
