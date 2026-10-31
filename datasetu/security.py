@@ -49,12 +49,13 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
         response.headers["Server"] = "DataSetu-Secure-Engine/1.0"
 
-        # Content Security Policy (strict self, allows self-contained inline demo styling & scripts)
+        # Content Security Policy (strict self, allows inline styling, Tailwind CDN, Google Fonts & assets)
         csp = (
             "default-src 'self'; "
-            "script-src 'self' 'unsafe-inline'; "
-            "style-src 'self' 'unsafe-inline'; "
-            "img-src 'self' data:; "
+            "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "font-src 'self' https://fonts.gstatic.com data:; "
+            "img-src 'self' data: https://lh3.googleusercontent.com https://*.googleusercontent.com https://images.unsplash.com; "
             "connect-src 'self'; "
             "frame-ancestors 'self';"
         )
