@@ -118,7 +118,7 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSyst
         </button>
         <button class="bg-govRed hover:bg-govRed-hover text-white px-4 py-2.5 rounded text-xs font-semibold uppercase tracking-wider flex items-center space-x-2 shadow-sm transition active:scale-95" onclick="triggerCdcHotSwap()">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
-          <span id="btn-upload-label">CDC Hot-Swap / डेटा सिंक</span>
+          <span id="btn-upload-label">Upload Dataset / योगदान दें</span>
         </button>
       </div>
     </div>
@@ -129,6 +129,7 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSyst
 <section class="hero-bg-overlay relative text-white pt-14 pb-20 px-4 sm:px-8 border-b-4 border-saffron overflow-hidden" id="hero">
   <!-- Watermarked Backdrop -->
   <div class="absolute inset-0 pointer-events-none select-none overflow-hidden">
+    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhsADWVijjMH-Rif8uS-xgOA2b_rpETTV27EqKuKZ7W3fIESU3AYoqaGQCj1WYrGvw4U-w-xF1bLpzvjxJv56kex5h6eHxFSBoAWsdwack-RdH31isVmSX_J3brRJJnxEWaH3cY7CFrsqBmBRmYtmSNMTFpJEcqFYkvShna6SlQVWrCKVNNzNJAyZr-XpP7u6aet5BkjFLJIrPac0GoFd6XGr4lbOmHUt0zXYbLOpABVWWYViIUUZn" alt="Citizen Survey Background" class="w-full h-full object-cover" style="opacity: 0.38; mix-blend-mode: luminosity; filter: contrast(1.15) brightness(0.95);">
     <div class="absolute inset-0 bg-gradient-to-b from-govNavy-950/60 via-govNavy-900/40 to-govNavy-950/85"></div>
   </div>
 
@@ -141,9 +142,10 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSyst
       <span class="text-saffron font-bold">Bharat Intelligence v1.0.0</span>
     </div>
 
-    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-3">
-      DataSetu <span class="font-devanagari text-saffron font-bold">(डेटासेतु)</span>
-    </h1>
+    <!-- State Emblem & Graphic Header from Design Specification -->
+    <div class="flex justify-center mb-6 sm:mb-8">
+      <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2kJZJcKY_XXFsxqj90C3yitUlWTKGUcwFO_TdJM_EwfhfcSUoFHfLVBb2McHGEYo97nI2AIRfVDNlS7MOtcbK8DGhK0ZyuSV3AaFdMyk2KK2jwX4-S2JT_2uazDV-75F5BzR0nvrNdc9_ZOAXlmYobDwUF2IkexiSQXr2YP_gE8idtvW6upfce6ejhuVPly_4gGrHreUlED5jb1ZCbW8EheIoH8gEM_WIvDMIq0uzDtr0FzWoj1E-" alt="DataSetu (डेटासेतु) - National Open Data to Open API Engine" class="h-36 sm:h-48 md:h-56 lg:h-64 max-w-5xl w-auto object-contain filter drop-shadow-2xl">
+    </div>
     <div class="text-base sm:text-lg font-semibold text-slate-200 uppercase tracking-widest mb-2 font-devanagari" id="hero-tagline-hi">
       राष्ट्रीय ओपन डेटा से ओपन एपीआई कंपाइलर
     </div>
@@ -258,12 +260,12 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSyst
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
     <div class="bg-white rounded-lg p-4 shadow-md border-t-4 border-govNavy-900 border-x border-b border-slate-200 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition group" onclick="switchGovTab('explorer'); resetFilters();" title="Click to view all ingested datasets">
       <div class="flex items-center justify-between">
-        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide group-hover:text-govNavy-900">Core Records Ingested</span>
+        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide group-hover:text-govNavy-900">Core Datasets Ingested</span>
         <span class="bg-blue-50 text-govNavy-900 text-[10px] font-bold px-1.5 py-0.5 rounded">All-India</span>
       </div>
-      <div class="text-3xl font-extrabold text-govNavy-900 mt-1" id="stat-kpi-records">2,500</div>
+      <div class="text-3xl font-extrabold text-govNavy-900 mt-1" id="stat-kpi-records">310+</div>
       <p class="text-xs text-slate-500 mt-1 flex items-center gap-1 font-medium">
-        <span class="text-indiaGreen font-bold">7 National Sectors</span> active in memory
+        <span class="text-indiaGreen font-bold">738 Districts</span> fully mapped &amp; active
       </p>
     </div>
 
@@ -272,27 +274,27 @@ body { font-family: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSyst
         <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide group-hover:text-amber-800">LGD Match Accuracy</span>
         <span class="bg-amber-50 text-amber-800 text-[10px] font-bold px-1.5 py-0.5 rounded">MoPR Verified</span>
       </div>
-      <div class="text-3xl font-extrabold text-govNavy-900 mt-1" id="stat-kpi-lgd">91.9%</div>
+      <div class="text-3xl font-extrabold text-govNavy-900 mt-1" id="stat-kpi-lgd">84.5%</div>
       <p class="text-xs text-slate-500 mt-1 flex items-center gap-1 font-medium">
-        <span class="text-amber-600 font-bold">2,298 / 2,500</span> via canonical &amp; alias gazette
+        <span class="text-amber-600 font-bold">+12.4%</span> via phoneme fuzzy resolution
       </p>
     </div>
 
     <div class="bg-white rounded-lg p-4 shadow-md border-t-4 border-indiaGreen border-x border-b border-slate-200 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition group" onclick="switchGovTab('disinfector')" title="Click to view Script Normalization Diff">
       <div class="flex items-center justify-between">
-        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide group-hover:text-indiaGreen">Hygiene Score</span>
-        <span class="bg-emerald-50 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded">Grade A+</span>
+        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide group-hover:text-indiaGreen">Script Normalization</span>
+        <span class="bg-emerald-50 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded">Indic to ISO</span>
       </div>
-      <div class="text-3xl font-extrabold text-govNavy-900 mt-1" id="stat-kpi-hygiene">98.8%</div>
+      <div class="text-3xl font-extrabold text-govNavy-900 mt-1" id="stat-kpi-hygiene">100%</div>
       <p class="text-xs text-slate-500 mt-1 flex items-center gap-1 font-medium">
-        CP-1252, Lakhs/Crores, merged headers resolved
+        Devanagari, Bengali, Tamil numerals converted
       </p>
     </div>
 
     <div class="bg-white rounded-lg p-4 shadow-md border-t-4 border-govRed border-x border-b border-slate-200 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition group" onclick="switchGovTab('playground'); executePlaygroundQuery();" title="Click to test live query latency">
       <div class="flex items-center justify-between">
         <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide group-hover:text-govRed">Query Latency (Avg)</span>
-        <span class="bg-red-50 text-govRed font-bold text-[10px] px-1.5 py-0.5 rounded">DuckDB Vectorized</span>
+        <span class="bg-red-50 text-govRed font-bold text-[10px] px-1.5 py-0.5 rounded">NIC Edge</span>
       </div>
       <div class="text-3xl font-extrabold text-govNavy-900 mt-1"><span id="stat-kpi-latency">&lt; 1.18</span><span class="text-lg font-bold text-slate-600">ms</span></div>
       <p class="text-xs text-slate-500 mt-1 flex items-center gap-1 font-medium">
