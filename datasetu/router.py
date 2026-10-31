@@ -156,6 +156,14 @@ def build_app(store: DatasetStore, source_info: Optional[Dict[str, Any]] = None)
             return HTMLResponse(content=deck_file.read_text(encoding="utf-8"))
         return HTMLResponse("<h1>Presentation deck not found</h1>")
 
+    @app.get("/screen.png", include_in_schema=False)
+    @app.get("/stitch/preview", include_in_schema=False)
+    def serve_stitch_screenshot():
+        screen_file = Path(__file__).parent / "static" / "screen.png"
+        if screen_file.exists():
+            return FileResponse(screen_file, media_type="image/png")
+        raise HTTPException(status_code=404, detail="Stitch design screenshot not found")
+
     @app.get("/download/ppt", include_in_schema=False)
     @app.get("/download/deck", include_in_schema=False)
     def download_ppt():
